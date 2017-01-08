@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Beacon Mqtt</string>
+    <string name="action_settings">Settings</string>
+</resources>
