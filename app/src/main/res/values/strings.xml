@@ -10,6 +10,7 @@
 
     <string name="pref_title_server_url">Server</string>
     <string name="pref_title_server_port">Port</string>
+    <string name="pref_title_mqtt_topic">Broadcast Topic</string>
 
     <string name="pref_header_notifications">Beacon Settings</string>
 </resources>

@@ -168,6 +168,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("mqtt_server"));
             bindPreferenceSummaryToValue(findPreference("mqtt_port"));
+            bindPreferenceSummaryToValue(findPreference("mqtt_topic"));
         }
 
         @Override
