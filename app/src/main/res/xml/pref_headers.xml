@@ -3,12 +3,12 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.gjermundbjaanes.beaconmqtt.SettingsActivity$MqttPreferenceFragment"
+        android:fragment="com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity$MqttPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_mqtt" />
 
     <header
-        android:fragment="com.gjermundbjaanes.beaconmqtt.SettingsActivity$BeaconPreferenceFragment"
+        android:fragment="com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity$BeaconPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/pref_header_notifications" />
 

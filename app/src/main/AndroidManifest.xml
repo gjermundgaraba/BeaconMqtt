@@ -23,14 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gjermundbjaanes.beaconmqtt.MainActivity" />
         </activity>
+
         <service android:name="org.eclipse.paho.android.service.MqttService" />
+
+        <activity
+            android:name=".newbeacon.NewBeaconActivity"
+            android:label="@string/title_activity_new_beacon"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gjermundbjaanes.beaconmqtt.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

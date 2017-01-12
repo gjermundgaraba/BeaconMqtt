@@ -1,4 +1,4 @@
-package com.gjermundbjaanes.beaconmqtt;
+package com.gjermundbjaanes.beaconmqtt.settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
