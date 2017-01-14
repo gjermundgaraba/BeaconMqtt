@@ -31,5 +31,6 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.0'
+    compile 'org.altbeacon:android-beacon-library:2.9.2'
     testCompile 'junit:junit:4.12'
 }
