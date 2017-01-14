@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 
 import com.gjermundbjaanes.beaconmqtt.R;
 
@@ -20,12 +21,18 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class NewBeaconActivity extends AppCompatActivity implements BeaconConsumer {
 
     protected static final String TAG = "RangingActivity";
+
     private BeaconManager beaconManager;
+
+    private ListView beaconListView;
+    private BeaconListAdapter beaconListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +42,23 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        beaconListView = (ListView) findViewById(R.id.add_beacon_list);
+
+        beaconListAdapter = new BeaconListAdapter(this);
+        beaconListView.setAdapter(beaconListAdapter);
+
         startBeaconScan();
     }
 
     private void startBeaconScan() {
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("x,s:0-1=feaa,m:2-2=20,d:3-3,d:4-5,d:6-7,d:8-11,d:12-15"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-20v"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-//        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("x,s:0-1=feaa,m:2-2=20,d:3-3,d:4-5,d:6-7,d:8-11,d:12-15"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-20v"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+        beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
         beaconManager.bind(this);
 
     }
@@ -64,6 +76,17 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 // TODO: Find get all beacons and see if they are already on screen. If any beacons are not in range anymore, remove them too...
                 Log.i(TAG, "Got  "+ beacons.size() + " beacons");
+
+                final List<Beacon> beaconsList = new ArrayList<>();
+                beaconsList.addAll(beacons);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        beaconListAdapter.updateBeacons(beaconsList);
+                    }
+                });
+
 
                 for (Beacon beacon : beacons) {
                     Log.i(TAG, "UUID: " + beacon.getId1() + ", Major: " + beacon.getId2() + ", Minor: " + beacon.getId3());

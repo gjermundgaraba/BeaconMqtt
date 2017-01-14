@@ -13,4 +13,11 @@
     tools:context="com.gjermundbjaanes.beaconmqtt.newbeacon.NewBeaconActivity"
     tools:showIn="@layout/activity_new_beacon">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/add_beacon_list" />
 </RelativeLayout>
