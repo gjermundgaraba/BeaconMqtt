@@ -17,14 +17,14 @@ import java.util.List;
 public class BeaconListAdapter extends BaseAdapter {
 
     private LayoutInflater layoutInflater;
-    private List<Beacon> beacons;
+    private List<BeaconListElement> beacons;
 
     public BeaconListAdapter(Context context) {
         beacons = new ArrayList<>();
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void updateBeacons(List<Beacon> beacons) {
+    public void updateBeacons(List<BeaconListElement> beacons) {
         this.beacons = beacons;
         this.notifyDataSetChanged();
     }
@@ -47,13 +47,17 @@ public class BeaconListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = layoutInflater.inflate(R.layout.list_beacon_layout, parent, false);
-        Beacon beacon = beacons.get(position);
+        BeaconListElement beacon = beacons.get(position);
 
         TextView uuidView = (TextView) rowView.findViewById(R.id.beacon_uuid);
-        uuidView.setText(beacon.getId1().toString());
+        uuidView.setText(beacon.getUuid());
 
         TextView detailsView = (TextView) rowView.findViewById(R.id.beacon_details);
-        detailsView.setText("Major: " + beacon.getId2() + " Minor: " + beacon.getId3());
+        String details = "Major: " + beacon.getMajor() + " Minor: " + beacon.getMinor();
+        if (beacon.isSaved()) {
+            details = "Already saved... " + details;
+        }
+        detailsView.setText(details);
 
         return rowView;
     }
