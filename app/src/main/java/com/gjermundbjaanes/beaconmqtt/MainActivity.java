@@ -15,13 +15,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
+import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.newbeacon.NewBeaconActivity;
 import com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
+    private ListView beaconOverviewListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         }
+
+        beaconOverviewListView = (ListView) findViewById(R.id.beacon_overview_list);
+        BeaconOverviewAdapter beaconOverviewAdapter = new BeaconOverviewAdapter(this);
+        beaconOverviewListView.setAdapter(beaconOverviewAdapter);
     }
 
     @Override

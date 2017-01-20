@@ -33,7 +33,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
     private BeaconManager beaconManager;
 
-    private ListView beaconListView;
+    private ListView beaconSearchListView;
     private List<BeaconResult> persistedBeaconList = new ArrayList<>();
     private BeaconListAdapter beaconListAdapter;
     private BeaconPersistence beaconPersistence;
@@ -49,19 +49,19 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        beaconListView = (ListView) findViewById(R.id.add_beacon_list);
+        beaconSearchListView = (ListView) findViewById(R.id.beacon_search_list);
 
         beaconListAdapter = new BeaconListAdapter(this);
-        beaconListView.setAdapter(beaconListAdapter);
+        beaconSearchListView.setAdapter(beaconListAdapter);
 
         beaconPersistence = new BeaconPersistence(this);
         persistedBeaconList = beaconPersistence.getBeacons();
 
         startBeaconScan();
-        beaconListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        beaconSearchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BeaconListElement beaconListElement = (BeaconListElement) beaconListView.getItemAtPosition(position);
+                BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
 
                 beaconPersistence.saveBeacon(beaconListElement.getBeacon());
                 persistedBeaconList = beaconPersistence.getBeacons();
@@ -135,7 +135,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         } catch (RemoteException e) {
             String errorMessage = "Not able to start ranging beacons";
             Log.e(TAG, errorMessage, e);
-            Snackbar.make(this.beaconListView, errorMessage, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(this.beaconSearchListView, errorMessage, Snackbar.LENGTH_LONG).show();
         }
     }
 
