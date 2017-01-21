@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,14 +19,28 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
+import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
 import com.gjermundbjaanes.beaconmqtt.newbeacon.NewBeaconActivity;
 import com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity {
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.MonitorNotifier;
+import org.altbeacon.beacon.Region;
 
+import java.util.List;
+
+import static com.gjermundbjaanes.beaconmqtt.BeaconScanHelper.startBeaconScan;
+
+public class MainActivity extends AppCompatActivity implements BeaconConsumer {
+
+    private static final String TAG = MainActivity.class.getName();
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
-    private ListView beaconOverviewListView;
+    private BeaconManager beaconManager;
+    private List<BeaconResult> beacons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +76,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        beaconOverviewListView = (ListView) findViewById(R.id.beacon_overview_list);
-        BeaconOverviewAdapter beaconOverviewAdapter = new BeaconOverviewAdapter(this);
+        beacons = new BeaconPersistence(this).getBeacons();
+        ListView beaconOverviewListView = (ListView) findViewById(R.id.beacon_overview_list);
+        BeaconOverviewAdapter beaconOverviewAdapter = new BeaconOverviewAdapter(this, beacons);
         beaconOverviewListView.setAdapter(beaconOverviewAdapter);
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
+        startBeaconScan(beaconManager, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        beaconManager.unbind(this);
     }
 
     @Override
@@ -113,5 +138,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        beaconManager.addMonitorNotifier(new MonitorNotifier() {
+            @Override
+            public void didEnterRegion(Region region) {
+                Log.i(TAG, "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+            }
+
+            @Override
+            public void didExitRegion(Region region) {
+                Log.i(TAG, "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+            }
+
+            @Override
+            public void didDetermineStateForRegion(int state, Region region) {
+                Log.i(TAG, "I have just switched from seeing/not seeing beacons: "+state);
+            }
+        });
+
+        try {
+            for (BeaconResult beacon : beacons) {
+                String id = beacon.getUuid() + beacon.getMajor() + beacon.getMinor();
+                beaconManager.startMonitoringBeaconsInRegion(new Region(id,
+                        Identifier.parse(beacon.getUuid()),
+                        Identifier.parse(beacon.getMajor()),
+                        Identifier.parse(beacon.getMinor())));
+            }
+
+        } catch (RemoteException e) {
+            Log.e(TAG, "Starting monitoring failed", e);
+        }
     }
 }

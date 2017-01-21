@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
 
 import java.util.List;
@@ -16,8 +15,8 @@ public class BeaconOverviewAdapter extends BaseAdapter {
     private final List<BeaconResult> beacons;
     private final LayoutInflater layoutInflater;
 
-    public BeaconOverviewAdapter(Context context) {
-        beacons = new BeaconPersistence(context).getBeacons();
+    public BeaconOverviewAdapter(Context context, List<BeaconResult> beacons) {
+        this.beacons = beacons;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
