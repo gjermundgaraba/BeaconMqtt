@@ -18,7 +18,6 @@ import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -26,14 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.gjermundbjaanes.beaconmqtt.BeaconScanHelper.startBeaconScan;
-
 public class NewBeaconActivity extends AppCompatActivity implements BeaconConsumer {
 
     private static final String TAG = NewBeaconActivity.class.getName();
     private static final String REGION_ID_FOR_RANGING = "myRangingUniqueId";
 
-    private BeaconManager beaconManager;
+    private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
 
     private ListView beaconSearchListView;
     private List<BeaconResult> persistedBeaconList = new ArrayList<>();
@@ -51,6 +48,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+
         beaconSearchListView = (ListView) findViewById(R.id.beacon_search_list);
 
         beaconListAdapter = new BeaconListAdapter(this);
@@ -58,9 +56,6 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
         beaconPersistence = new BeaconPersistence(this);
         persistedBeaconList = beaconPersistence.getBeacons();
-
-        beaconManager = BeaconManager.getInstanceForApplication(this);
-        startBeaconScan(beaconManager, this);
 
         beaconSearchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,12 +66,26 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
                 persistedBeaconList = beaconPersistence.getBeacons();
             }
         });
+
+        beaconManager.bind(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         beaconManager.unbind(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (beaconManager.isBound(this)) beaconManager.setBackgroundMode(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (beaconManager.isBound(this)) beaconManager.setBackgroundMode(false);
     }
 
     @Override
