@@ -32,6 +32,13 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    public static final String MQTT_SERVER_KEY = "mqtt_server";
+    public static final String MQTT_PORT_KEY = "mqtt_port";
+    public static final String MQTT_TOPIC_KEY = "mqtt_topic";
+    public static final String beacon_notifications_enter_key = "beacon_notifications_enter";
+    public static final String beacon_notifications_exit_key = "beacon_notifications_exit";
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -163,9 +170,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("mqtt_server"));
-            bindPreferenceSummaryToValue(findPreference("mqtt_port"));
-            bindPreferenceSummaryToValue(findPreference("mqtt_topic"));
+            bindPreferenceSummaryToValue(findPreference(MQTT_SERVER_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_PORT_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_TOPIC_KEY));
         }
 
         @Override
@@ -180,7 +187,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * This fragment shows notification preferences only. It is used when the
+     * This fragment shows beacon preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

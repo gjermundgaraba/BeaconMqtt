@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
@@ -21,6 +22,8 @@ import org.altbeacon.beacon.startup.RegionBootstrap;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.beacon_notifications_enter_key;
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.beacon_notifications_exit_key;
 import static org.altbeacon.beacon.BeaconManager.DEFAULT_FOREGROUND_SCAN_PERIOD;
 
 public class BeaconApplication extends Application implements BootstrapNotifier {
@@ -61,13 +64,19 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     @Override
     public void didEnterRegion(Region region) {
         Log.i(TAG, "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        showNotification("Beacon spotted!", "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(beacon_notifications_enter_key, false);
+        if (showNotification) {
+            showNotification("Beacon spotted!", "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        }
     }
 
     @Override
     public void didExitRegion(Region region) {
         Log.i(TAG, "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        showNotification("Beacon lost!", "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(beacon_notifications_exit_key, false);
+        if (showNotification) {
+            showNotification("Beacon lost!", "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        }
     }
 
     @Override
