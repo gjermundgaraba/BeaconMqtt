@@ -10,4 +10,23 @@
         android:key="beacon_notifications_exit"
         android:title="@string/pref_title_beacon_notifications_exit" />
 
+    <EditTextPreference
+        android:inputType="number"
+        android:key="beacon_period_between_scans"
+        android:defaultValue="300000"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_beacon_period_between_scans" />
+
+    <EditTextPreference
+        android:inputType="number"
+        android:defaultValue="10000"
+        android:key="beacon_scan_period"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_beacon_scan_period" />
+
+
 </PreferenceScreen>

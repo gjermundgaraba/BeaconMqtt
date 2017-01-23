@@ -36,8 +36,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final String MQTT_SERVER_KEY = "mqtt_server";
     public static final String MQTT_PORT_KEY = "mqtt_port";
     public static final String MQTT_TOPIC_KEY = "mqtt_topic";
-    public static final String beacon_notifications_enter_key = "beacon_notifications_enter";
-    public static final String beacon_notifications_exit_key = "beacon_notifications_exit";
+    public static final String BEACON_NOTIFICATIONS_ENTER_KEY = "beacon_notifications_enter";
+    public static final String BEACON_NOTIFICATIONS_EXIT_KEY = "beacon_notifications_exit";
+    public static final String BEACON_PERIOD_BETWEEN_SCANS_KEY = "beacon_period_between_scans";
+    public static final String BEACON_SCAN_PERIOD_KEY = "beacon_scan_period";
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -202,6 +204,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference(BEACON_PERIOD_BETWEEN_SCANS_KEY));
+            bindPreferenceSummaryToValue(findPreference(BEACON_SCAN_PERIOD_KEY));
         }
 
         @Override
