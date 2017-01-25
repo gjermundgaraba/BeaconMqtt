@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.mqtt.MqttBroadcaster;
 
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
@@ -29,17 +30,19 @@ import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_PE
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_SCAN_PERIOD_KEY;
 import static org.altbeacon.beacon.BeaconManager.DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD;
 import static org.altbeacon.beacon.BeaconManager.DEFAULT_BACKGROUND_SCAN_PERIOD;
-import static org.altbeacon.beacon.BeaconManager.DEFAULT_FOREGROUND_SCAN_PERIOD;
 
 public class BeaconApplication extends Application implements BootstrapNotifier {
 
     private static final String TAG = BeaconApplication.class.getName();
     private RegionBootstrap regionBootstrap;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
+    private MqttBroadcaster mqttBroadcaster;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mqttBroadcaster = new MqttBroadcaster(this);
 
         final BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
@@ -89,6 +92,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     @Override
     public void didEnterRegion(Region region) {
         Log.i(TAG, "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        mqttBroadcaster.publisMessage("beacon/enter", region.getId1() + " " + region.getId2() + " " + region.getId3());
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
         if (showNotification) {
             showNotification("Beacon spotted!", "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
@@ -98,6 +102,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     @Override
     public void didExitRegion(Region region) {
         Log.i(TAG, "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        mqttBroadcaster.publisMessage("beacon/exit", region.getId1() + " " + region.getId2() + " " + region.getId3());
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
         if (showNotification) {
             showNotification("Beacon lost!", "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
