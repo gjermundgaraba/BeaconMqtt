@@ -26,6 +26,7 @@ public class BeaconPersistence {
                     BeaconContract.BeaconEntry.COLUMN_NAME_UUID,
                     BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR,
                     BeaconContract.BeaconEntry.COLUMN_NAME_MINOR,
+                    BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME,
             };
 
             Cursor cursor = db.query(BeaconContract.BeaconEntry.TABLE_NAME, columns, null, null, null, null, null);
@@ -35,7 +36,8 @@ public class BeaconPersistence {
                 String uuid = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_UUID));
                 String major = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR));
                 String minor = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_MINOR));
-                beacons.add(new BeaconResult(uuid, major, minor));
+                String informalName = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME));
+                beacons.add(new BeaconResult(uuid, major, minor, informalName));
             }
             cursor.close();
 
@@ -48,7 +50,7 @@ public class BeaconPersistence {
 
     }
 
-    public void saveBeacon(Beacon beacon) {
+    public void saveBeacon(Beacon beacon, String informalBeaconName) {
         SQLiteDatabase db = beaconDbHelper.getWritableDatabase();
 
         try {
@@ -57,6 +59,7 @@ public class BeaconPersistence {
             values.put(BeaconContract.BeaconEntry.COLUMN_NAME_UUID, beacon.getId1().toString());
             values.put(BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR, beacon.getId2().toString());
             values.put(BeaconContract.BeaconEntry.COLUMN_NAME_MINOR, beacon.getId3().toString());
+            values.put(BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME, informalBeaconName);
 
             db.insert(BeaconContract.BeaconEntry.TABLE_NAME, null, values);
         } finally {

@@ -38,7 +38,7 @@ public class MqttBroadcaster {
             mqttConnectOptions.setCleanSession(false);
 
             try {
-                mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+                mqttAndroidClient.connect(mqttConnectOptions, context, new IMqttActionListener() {
 
                     @Override
                     public void onSuccess(IMqttToken asyncActionToken) {

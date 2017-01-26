@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BeaconDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "Beacon.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -15,6 +15,7 @@ public class BeaconDbHelper extends SQLiteOpenHelper {
                     BeaconContract.BeaconEntry.COLUMN_NAME_UUID + " TEXT," +
                     BeaconContract.BeaconEntry.COLUMN_NAME_MINOR + " TEXT," +
                     BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR + " TEXT," +
+                    BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME + " TEXT," +
                     "PRIMARY KEY (" +
                     BeaconContract.BeaconEntry.COLUMN_NAME_UUID + ", " +
                     BeaconContract.BeaconEntry.COLUMN_NAME_MINOR + ", " +

@@ -11,5 +11,6 @@ public class BeaconContract {
         public static final String COLUMN_NAME_UUID = "uuid";
         public static final String COLUMN_NAME_MINOR = "minor";
         public static final String COLUMN_NAME_MAJOR = "major";
+        public static final String COLUMN_NAME_INFORMAL_NAME = "name";
     }
 }
