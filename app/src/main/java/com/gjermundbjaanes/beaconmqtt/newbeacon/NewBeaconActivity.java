@@ -65,6 +65,8 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         beaconSearchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                final BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
                 LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
                 final View dialogLayout = inflater.inflate(R.layout.dialog_new_beacon, null);
@@ -74,7 +76,6 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
                             public void onClick(DialogInterface dialog, int which) {
                                 TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.dailog_new_beacon_name);
                                 String informalBeaconName = newBeaconNameTextView.getText().toString();
-                                BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
 
                                 beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
                                 persistedBeaconList = beaconPersistence.getBeacons();

@@ -92,7 +92,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     @Override
     public void didEnterRegion(Region region) {
         Log.i(TAG, "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        mqttBroadcaster.publisMessage("beacon/enter", region.getId1() + " " + region.getId2() + " " + region.getId3());
+        mqttBroadcaster.publisMessage(region.getId1().toString(), region.getId2().toString(), region.getId3().toString(), "enter");
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
         if (showNotification) {
             showNotification("Beacon spotted!", "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
@@ -102,7 +102,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     @Override
     public void didExitRegion(Region region) {
         Log.i(TAG, "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        mqttBroadcaster.publisMessage("beacon/exit", region.getId1() + " " + region.getId2() + " " + region.getId3());
+        mqttBroadcaster.publisMessage(region.getId1().toString(), region.getId2().toString(), region.getId3().toString(), "exit");
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
         if (showNotification) {
             showNotification("Beacon lost!", "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
