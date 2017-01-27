@@ -40,6 +40,9 @@ public class BeaconOverviewAdapter extends BaseAdapter {
         View rowView = layoutInflater.inflate(R.layout.list_beacon_layout, parent, false);
         BeaconResult beacon = beacons.get(position);
 
+        TextView nameView = (TextView) rowView.findViewById(R.id.beacon_name);
+        nameView.setText(beacon.getInformalName());
+
         TextView uuidView = (TextView) rowView.findViewById(R.id.beacon_uuid);
         uuidView.setText(beacon.getUuid());
 
