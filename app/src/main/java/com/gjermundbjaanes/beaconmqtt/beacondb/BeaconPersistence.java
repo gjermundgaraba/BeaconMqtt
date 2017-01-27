@@ -10,6 +10,11 @@ import org.altbeacon.beacon.Beacon;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME;
+import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR;
+import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MINOR;
+import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_UUID;
+
 public class BeaconPersistence {
 
     private final BeaconDbHelper beaconDbHelper;
@@ -23,20 +28,20 @@ public class BeaconPersistence {
 
         try {
             String[] columns = {
-                    BeaconContract.BeaconEntry.COLUMN_NAME_UUID,
-                    BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR,
-                    BeaconContract.BeaconEntry.COLUMN_NAME_MINOR,
-                    BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME,
+                    COLUMN_NAME_UUID,
+                    COLUMN_NAME_MAJOR,
+                    COLUMN_NAME_MINOR,
+                    COLUMN_NAME_INFORMAL_NAME,
             };
 
             Cursor cursor = db.query(BeaconContract.BeaconEntry.TABLE_NAME, columns, null, null, null, null, null);
 
             List<BeaconResult> beacons = new ArrayList<>();
             while(cursor.moveToNext()) {
-                String uuid = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_UUID));
-                String major = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR));
-                String minor = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_MINOR));
-                String informalName = cursor.getString(cursor.getColumnIndex(BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME));
+                String uuid = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_UUID));
+                String major = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_MAJOR));
+                String minor = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_MINOR));
+                String informalName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_INFORMAL_NAME));
                 beacons.add(new BeaconResult(uuid, major, minor, informalName));
             }
             cursor.close();
@@ -56,10 +61,10 @@ public class BeaconPersistence {
         try {
             ContentValues values = new ContentValues();
 
-            values.put(BeaconContract.BeaconEntry.COLUMN_NAME_UUID, beacon.getId1().toString());
-            values.put(BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR, beacon.getId2().toString());
-            values.put(BeaconContract.BeaconEntry.COLUMN_NAME_MINOR, beacon.getId3().toString());
-            values.put(BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME, informalBeaconName);
+            values.put(COLUMN_NAME_UUID, beacon.getId1().toString());
+            values.put(COLUMN_NAME_MAJOR, beacon.getId2().toString());
+            values.put(COLUMN_NAME_MINOR, beacon.getId3().toString());
+            values.put(COLUMN_NAME_INFORMAL_NAME, informalBeaconName);
 
             db.insert(BeaconContract.BeaconEntry.TABLE_NAME, null, values);
         } finally {
@@ -68,5 +73,37 @@ public class BeaconPersistence {
             }
         }
 
+    }
+
+    public BeaconResult getBeacon(String uuid, String major, String minor) {
+        SQLiteDatabase db = beaconDbHelper.getReadableDatabase();
+
+        try {
+            String[] columns = {
+                    COLUMN_NAME_UUID,
+                    COLUMN_NAME_MAJOR,
+                    COLUMN_NAME_MINOR,
+                    COLUMN_NAME_INFORMAL_NAME,
+            };
+
+            String selection = COLUMN_NAME_UUID + "=? AND " + COLUMN_NAME_MAJOR + "=? AND " + COLUMN_NAME_MINOR + "=?";
+
+            Cursor cursor = db.query(BeaconContract.BeaconEntry.TABLE_NAME, columns, selection, new String[] {uuid, major, minor}, null, null, null);
+
+            if (cursor != null) {
+                cursor.moveToFirst();
+                String informalName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_INFORMAL_NAME));
+                cursor.close();
+
+                return new BeaconResult(uuid, major, minor, informalName);
+            }
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        return null;
     }
 }

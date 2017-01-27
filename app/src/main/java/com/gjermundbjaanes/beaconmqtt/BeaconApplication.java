@@ -34,6 +34,8 @@ import static org.altbeacon.beacon.BeaconManager.DEFAULT_BACKGROUND_SCAN_PERIOD;
 public class BeaconApplication extends Application implements BootstrapNotifier {
 
     private static final String TAG = BeaconApplication.class.getName();
+
+    private BeaconPersistence beaconPersistence = new BeaconPersistence(this);
     private RegionBootstrap regionBootstrap;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
     private MqttBroadcaster mqttBroadcaster;
@@ -74,7 +76,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         Long beaconScanPeriod = Long.parseLong(defaultSharedPreferences.getString(BEACON_SCAN_PERIOD_KEY, Long.valueOf(DEFAULT_BACKGROUND_SCAN_PERIOD).toString()));
         beaconManager.setBackgroundScanPeriod(beaconScanPeriod);
 
-        List<BeaconResult> beacons = new BeaconPersistence(this).getBeacons();
+        List<BeaconResult> beacons = beaconPersistence.getBeacons();
 
         List<Region> regions = new ArrayList<>(beacons.size());
         for (BeaconResult beacon : beacons) {
@@ -91,21 +93,41 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
 
     @Override
     public void didEnterRegion(Region region) {
-        Log.i(TAG, "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        mqttBroadcaster.publisMessage(region.getId1().toString(), region.getId2().toString(), region.getId3().toString(), "enter");
+        String uuid = region.getId1().toString();
+        String major = region.getId2().toString();
+        String minor = region.getId3().toString();
+
+        Log.i(TAG, "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor);
+        mqttBroadcaster.publisMessage(uuid, major, minor, "enter");
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
         if (showNotification) {
-            showNotification("Beacon spotted!", "Entered region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+            BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
+            String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+            if (beacon != null && beacon.getInformalName() != null) {
+                message = beacon.getInformalName() + " " +  message;
+            }
+
+            showNotification("Beacon spotted!", message);
         }
     }
 
     @Override
     public void didExitRegion(Region region) {
-        Log.i(TAG, "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        mqttBroadcaster.publisMessage(region.getId1().toString(), region.getId2().toString(), region.getId3().toString(), "exit");
+        String uuid = region.getId1().toString();
+        String major = region.getId2().toString();
+        String minor = region.getId3().toString();
+
+        Log.i(TAG, "Exited region uuid: " + uuid + ", major: " + region.getId2() + ", minor: " + region.getId3());
+        mqttBroadcaster.publisMessage(uuid, major, minor, "exit");
         boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
         if (showNotification) {
-            showNotification("Beacon lost!", "Exited region uuid: " + region.getId1() + ", major: " + region.getId2() + ", minor: " + region.getId3());
+            BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
+            String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+            if (beacon != null && beacon.getInformalName() != null) {
+                message = beacon.getInformalName() + " " +  message;
+            }
+
+            showNotification("Beacon lost!", message);
         }
     }
 
