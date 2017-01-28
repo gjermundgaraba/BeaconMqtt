@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.gjermundbjaanes.beaconmqtt.newbeacon.NewBeaconActivity">
+
+    <item
+        android:id="@+id/menu_add_beacon_manually"
+        android:orderInCategory="100"
+        android:title="@string/new_beacon_add_manually_menu"
+        app:showAsAction="never" />
+</menu>

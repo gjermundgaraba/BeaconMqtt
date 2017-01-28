@@ -3,6 +3,7 @@ package com.gjermundbjaanes.beaconmqtt.newbeacon;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import com.gjermundbjaanes.beaconmqtt.R;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -159,6 +163,52 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             Log.e(TAG, errorMessage, e);
             Snackbar.make(this.beaconSearchListView, errorMessage, Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.new_beacon_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_add_beacon_manually) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
+            LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
+            final View dialogLayout = inflater.inflate(R.layout.dialog_new_manual_beacon, null);
+            builder.setView(dialogLayout)
+                    .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_name);
+                            String informalBeaconName = newBeaconNameTextView.getText().toString();
+
+                            TextView newBeaconUuidTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_uuid);
+                            String beaconUuid = newBeaconUuidTextView.getText().toString();
+
+                            TextView newBeaconMajorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_major);
+                            String beaconMajor = newBeaconMajorTextView.getText().toString();
+
+                            TextView newBeaconMinorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_minor);
+                            String beaconMinor = newBeaconMinorTextView.getText().toString();
+
+                            beaconPersistence.saveBeacon(beaconUuid, beaconMajor, beaconMinor, informalBeaconName);
+                            persistedBeaconList = beaconPersistence.getBeacons();
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_cancel_beacon, null)
+                    .show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

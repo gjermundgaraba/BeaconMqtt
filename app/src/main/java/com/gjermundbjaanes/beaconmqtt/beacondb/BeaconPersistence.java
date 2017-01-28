@@ -56,14 +56,18 @@ public class BeaconPersistence {
     }
 
     public void saveBeacon(Beacon beacon, String informalBeaconName) {
+        saveBeacon(beacon.getId1().toString(), beacon.getId2().toString(), beacon.getId3().toString(), informalBeaconName);
+    }
+
+    public void saveBeacon(String uuid, String major, String minor, String informalBeaconName) {
         SQLiteDatabase db = beaconDbHelper.getWritableDatabase();
 
         try {
             ContentValues values = new ContentValues();
 
-            values.put(COLUMN_NAME_UUID, beacon.getId1().toString());
-            values.put(COLUMN_NAME_MAJOR, beacon.getId2().toString());
-            values.put(COLUMN_NAME_MINOR, beacon.getId3().toString());
+            values.put(COLUMN_NAME_UUID, uuid);
+            values.put(COLUMN_NAME_MAJOR, major);
+            values.put(COLUMN_NAME_MINOR, minor);
             values.put(COLUMN_NAME_INFORMAL_NAME, informalBeaconName);
 
             db.insert(BeaconContract.BeaconEntry.TABLE_NAME, null, values);
@@ -72,7 +76,6 @@ public class BeaconPersistence {
                 db.close();
             }
         }
-
     }
 
     public BeaconResult getBeacon(String uuid, String major, String minor) {

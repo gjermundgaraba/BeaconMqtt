@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Beacon Mqtt</string>
-    <string name="action_settings">Settings</string>
+    <string name="main_menu_action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
@@ -18,8 +18,13 @@
     <string name="pref_header_notifications">Beacon Settings</string>
 
     <!-- String related to new beacon -->
+    <string name="new_beacon_add_manually_menu">Add Beacon Manually</string>
+
     <string name="title_activity_new_beacon">NewBeaconActivity</string>
     <string name="dialog_new_beacon_name">Beacon Name (Informal)</string>
     <string name="dialog_save_beacon">Save Beacon</string>
     <string name="dialog_cancel_beacon">Cancel</string>
+    <string name="dialog_new_beacon_uuid">Beacon UUID</string>
+    <string name="dialog_new_beacon_major">Beacon Major</string>
+    <string name="dialog_new_beacon_minor">Beacon Minor</string>
 </resources>
