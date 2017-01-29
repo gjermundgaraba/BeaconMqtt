@@ -14,9 +14,11 @@ import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry
 import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR;
 import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MINOR;
 import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_UUID;
+import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.TABLE_NAME;
 
 public class BeaconPersistence {
 
+    private static final String PRIMARY_KEY_SELECTION = COLUMN_NAME_UUID + "=? AND " + COLUMN_NAME_MAJOR + "=? AND " + COLUMN_NAME_MINOR + "=?";
     private final BeaconDbHelper beaconDbHelper;
 
     public BeaconPersistence(Context context) {
@@ -34,7 +36,7 @@ public class BeaconPersistence {
                     COLUMN_NAME_INFORMAL_NAME,
             };
 
-            Cursor cursor = db.query(BeaconContract.BeaconEntry.TABLE_NAME, columns, null, null, null, null, null);
+            Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null);
 
             List<BeaconResult> beacons = new ArrayList<>();
             while(cursor.moveToNext()) {
@@ -70,7 +72,7 @@ public class BeaconPersistence {
             values.put(COLUMN_NAME_MINOR, minor);
             values.put(COLUMN_NAME_INFORMAL_NAME, informalBeaconName);
 
-            db.insert(BeaconContract.BeaconEntry.TABLE_NAME, null, values);
+            db.insert(TABLE_NAME, null, values);
         } finally {
             if (db != null) {
                 db.close();
@@ -89,9 +91,7 @@ public class BeaconPersistence {
                     COLUMN_NAME_INFORMAL_NAME,
             };
 
-            String selection = COLUMN_NAME_UUID + "=? AND " + COLUMN_NAME_MAJOR + "=? AND " + COLUMN_NAME_MINOR + "=?";
-
-            Cursor cursor = db.query(BeaconContract.BeaconEntry.TABLE_NAME, columns, selection, new String[] {uuid, major, minor}, null, null, null);
+            Cursor cursor = db.query(TABLE_NAME, columns, PRIMARY_KEY_SELECTION, new String[] {uuid, major, minor}, null, null, null);
 
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -108,5 +108,18 @@ public class BeaconPersistence {
         }
 
         return null;
+    }
+
+    public boolean deleteBeacon(BeaconResult beaconResult) {
+        SQLiteDatabase db = beaconDbHelper.getWritableDatabase();
+
+        try {
+            int numberOfRowsAffected = db.delete(TABLE_NAME, PRIMARY_KEY_SELECTION, new String[] {beaconResult.getUuid(), beaconResult.getMajor(), beaconResult.getMinor()});
+            return numberOfRowsAffected != 0;
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 }

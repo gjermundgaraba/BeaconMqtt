@@ -33,4 +33,5 @@ dependencies {
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1-SNAPSHOT'
     compile 'org.altbeacon:android-beacon-library:2.9.2'
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

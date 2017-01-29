@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
@@ -27,6 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    private BeaconOverviewAdapter beaconOverviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,28 @@ public class MainActivity extends AppCompatActivity {
 
         List<BeaconResult> beacons = new BeaconPersistence(this).getBeacons();
         ListView beaconOverviewListView = (ListView) findViewById(R.id.beacon_overview_list);
-        BeaconOverviewAdapter beaconOverviewAdapter = new BeaconOverviewAdapter(this, beacons);
+        beaconOverviewAdapter = new BeaconOverviewAdapter(this, beacons);
+        beaconOverviewAdapter.setOnDeleteClickListener(new BeaconOverviewAdapter.OnDeleteClickListener() {
+            @Override
+            public void onBeaconDeleteClick(final BeaconResult beaconResult) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Delete Confirmation")
+                        .setMessage("Are you sure you want to delete this beacon?")
+                        .setNegativeButton(R.string.dialog_cancel_beacon, null)
+                        .setPositiveButton(R.string.dialog_delete_beacon, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                BeaconPersistence beaconPersistence = new BeaconPersistence(MainActivity.this);
+                                boolean beaconDeleted = beaconPersistence.deleteBeacon(beaconResult);
+                                if (beaconDeleted) {
+                                    beaconOverviewAdapter.updateBeacons(beaconPersistence.getBeacons());
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Not able to delete beacon", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }).show();
+            }
+        });
         beaconOverviewListView.setAdapter(beaconOverviewAdapter);
     }
 

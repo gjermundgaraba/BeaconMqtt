@@ -46,7 +46,7 @@ public class BeaconListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View rowView = layoutInflater.inflate(R.layout.list_beacon_layout, parent, false);
+        View rowView = layoutInflater.inflate(R.layout.list_new_beacon_layout, parent, false);
         BeaconListElement beacon = beacons.get(position);
 
         TextView uuidView = (TextView) rowView.findViewById(R.id.beacon_uuid);

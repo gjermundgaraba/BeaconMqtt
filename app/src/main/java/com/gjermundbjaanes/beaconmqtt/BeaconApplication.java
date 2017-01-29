@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
@@ -81,11 +82,26 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         List<Region> regions = new ArrayList<>(beacons.size());
         for (BeaconResult beacon : beacons) {
             String id = beacon.getUuid() + beacon.getMajor() + beacon.getMinor();
-            Region region = new Region(id,
-                    Identifier.parse(beacon.getUuid()),
-                    Identifier.parse(beacon.getMajor()),
-                    Identifier.parse(beacon.getMinor()));
-            regions.add(region);
+            try {
+                Region region = new Region(id,
+                        Identifier.parse(beacon.getUuid()),
+                        Identifier.parse(beacon.getMajor()),
+                        Identifier.parse(beacon.getMinor()));
+                regions.add(region);
+            } catch (IllegalArgumentException e) {
+                String informalName = beacon.getInformalName();
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Not able to start monitoring for beacon with ");
+                if (informalName != null && !informalName.isEmpty()) {
+                    stringBuilder.append("name: \"").append(informalName).append("\" with ");
+                }
+                stringBuilder.append("uuid: \"").append(beacon.getUuid()).append("\" major: \"").append(beacon.getMajor()).append("\" minor: \"").append(beacon.getMinor()).append("\"");
+
+                String errorMessage = stringBuilder.toString();
+                Log.e(TAG, errorMessage, e);
+
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+            }
         }
 
         regionBootstrap = new RegionBootstrap(this, regions);

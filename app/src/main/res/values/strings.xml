@@ -3,6 +3,9 @@
     <string name="main_menu_action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- String related to Main Activity -->
+    <string name="dialog_delete_beacon">Delete Beacon</string>
+
     <!-- Strings related to Settings -->
     <string name="pref_header_mqtt">MQTT</string>
 
