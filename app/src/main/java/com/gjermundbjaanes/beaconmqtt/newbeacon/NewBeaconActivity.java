@@ -72,23 +72,25 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 final BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
-                LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
-                final View dialogLayout = inflater.inflate(R.layout.dialog_new_beacon, null);
-                builder.setView(dialogLayout)
-                        .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.dailog_new_beacon_name);
-                                String informalBeaconName = newBeaconNameTextView.getText().toString();
+                if (!beaconListElement.isSaved()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
+                    LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
+                    final View dialogLayout = inflater.inflate(R.layout.dialog_new_beacon, null);
+                    builder.setView(dialogLayout)
+                            .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.dailog_new_beacon_name);
+                                    String informalBeaconName = newBeaconNameTextView.getText().toString();
 
-                                beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
-                                persistedBeaconList = beaconPersistence.getBeacons();
-                                ((BeaconApplication) getApplication()).restartBeaconSearch();
-                            }
-                        })
-                        .setNegativeButton(R.string.dialog_cancel_beacon, null)
-                        .show();
+                                    beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
+                                    persistedBeaconList = beaconPersistence.getBeacons();
+                                    ((BeaconApplication) getApplication()).restartBeaconSearch();
+                                }
+                            })
+                            .setNegativeButton(R.string.dialog_cancel_beacon, null)
+                            .show();
+                }
             }
         });
 

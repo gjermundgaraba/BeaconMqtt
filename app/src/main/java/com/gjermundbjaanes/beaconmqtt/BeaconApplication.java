@@ -137,7 +137,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
             if (showNotification) {
 
                 String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
-                if (beacon != null && beacon.getInformalName() != null) {
+                if (beacon.getInformalName() != null) {
                     message = beacon.getInformalName() + " " +  message;
                 }
 
@@ -166,7 +166,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
             if (showNotification) {
 
                 String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
-                if (beacon != null && beacon.getInformalName() != null) {
+                if (beacon.getInformalName() != null) {
                     message = beacon.getInformalName() + " " +  message;
                 }
 
