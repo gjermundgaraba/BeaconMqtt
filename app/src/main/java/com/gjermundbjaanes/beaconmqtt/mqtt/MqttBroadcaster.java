@@ -1,3 +1,4 @@
+
 package com.gjermundbjaanes.beaconmqtt.mqtt;
 
 import android.content.Context;
@@ -15,14 +16,18 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_ENTER_TOPIC_KEY;
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_EXIT_TOPIC_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_PORT_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_SERVER_KEY;
-import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_TOPIC_KEY;
 
 public class MqttBroadcaster {
 
     private static final String TAG = MqttBroadcaster.class.getName();
     private static final String CLIENT_ID = "AndroidMqttBeacon";
+    private static final String DEFAULT_ENTER_TOPIC = "beacon/enter";
+    private static final String DEFAULT_EXIT_TOPIC = "beacon/exit";
+
     private MqttAndroidClient mqttAndroidClient = null;
     private final SharedPreferences defaultSharedPreferences;
 
@@ -72,11 +77,11 @@ public class MqttBroadcaster {
 
                     @Override
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Log.e(TAG, "Failed to connect to: " +  serverUri, exception);
+                        Log.e(TAG, "Failed to connect to: " + serverUri, exception);
                     }
                 });
             } catch (MqttException e) {
-                Log.e(TAG, "Failed to connect to: " +  e);
+                Log.e(TAG, "Failed to connect to: " + e);
             }
 
         } else {
@@ -85,20 +90,18 @@ public class MqttBroadcaster {
 
     }
 
-    public void publisMessage(String uuid, String major, String minor, String event) {
+    public void publishEnterMessage(String uuid, String major, String minor) {
+        String preferenceEnterTopic = defaultSharedPreferences.getString(MQTT_ENTER_TOPIC_KEY, DEFAULT_ENTER_TOPIC);
+        publishMessage(uuid, major, minor, preferenceEnterTopic);
+    }
+
+    public void publishExitMessage(String uuid, String major, String minor) {
+        String preferenceEnterTopic = defaultSharedPreferences.getString(MQTT_EXIT_TOPIC_KEY, DEFAULT_EXIT_TOPIC);
+        publishMessage(uuid, major, minor, preferenceEnterTopic);
+    }
+
+    private void publishMessage(String uuid, String major, String minor, String topic) {
         if (mqttAndroidClient != null) {
-            String defaultTopic = "beacon";
-            String preferenceTopic = defaultSharedPreferences.getString(MQTT_TOPIC_KEY, defaultTopic);
-
-            if (preferenceTopic.isEmpty()) {
-                preferenceTopic = defaultTopic;
-            }
-
-            String topic = preferenceTopic;
-            if (!topic.endsWith("/")) {
-                topic += "/";
-            }
-            topic += event;
             try {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("uuid", uuid);
@@ -113,6 +116,5 @@ public class MqttBroadcaster {
         } else {
             Log.i(TAG, "Publish not done because mqttAndroidClient is not set up");
         }
-
     }
 }

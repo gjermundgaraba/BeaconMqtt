@@ -125,7 +125,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         String minor = region.getId3().toString();
 
         Log.i(TAG, "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor);
-        mqttBroadcaster.publisMessage(uuid, major, minor, "enter");
+        mqttBroadcaster.publishEnterMessage(uuid, major, minor);
 
         BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
         if (beacon != null) {
@@ -154,7 +154,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         String minor = region.getId3().toString();
 
         Log.i(TAG, "Exited region uuid: " + uuid + ", major: " + region.getId2() + ", minor: " + region.getId3());
-        mqttBroadcaster.publisMessage(uuid, major, minor, "exit");
+        mqttBroadcaster.publishExitMessage(uuid, major, minor);
 
         BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
         if (beacon != null) {

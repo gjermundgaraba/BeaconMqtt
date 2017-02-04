@@ -35,7 +35,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     public static final String MQTT_SERVER_KEY = "mqtt_server";
     public static final String MQTT_PORT_KEY = "mqtt_port";
-    public static final String MQTT_TOPIC_KEY = "mqtt_topic";
+    public static final String MQTT_ENTER_TOPIC_KEY = "mqtt_enter_topic";
+    public static final String MQTT_EXIT_TOPIC_KEY = "mqtt_exit_topic";
     public static final String BEACON_NOTIFICATIONS_ENTER_KEY = "beacon_notifications_enter";
     public static final String BEACON_NOTIFICATIONS_EXIT_KEY = "beacon_notifications_exit";
     public static final String BEACON_PERIOD_BETWEEN_SCANS_KEY = "beacon_period_between_scans";
@@ -174,7 +175,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(MQTT_SERVER_KEY));
             bindPreferenceSummaryToValue(findPreference(MQTT_PORT_KEY));
-            bindPreferenceSummaryToValue(findPreference(MQTT_TOPIC_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_ENTER_TOPIC_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_EXIT_TOPIC_KEY));
         }
 
         @Override

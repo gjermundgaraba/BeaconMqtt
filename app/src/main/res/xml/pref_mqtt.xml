@@ -20,10 +20,20 @@
 
     <EditTextPreference
         android:inputType="text"
-        android:key="mqtt_topic"
+        android:key="mqtt_enter_topic"
+        android:defaultValue="beacon/enter"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_mqtt_topic" />
+        android:title="@string/pref_title_mqtt_enter_topic" />
+
+    <EditTextPreference
+        android:inputType="text"
+        android:key="mqtt_exit_topic"
+        android:defaultValue="beacon/exit"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_mqtt_exit_topic" />
 
 </PreferenceScreen>
