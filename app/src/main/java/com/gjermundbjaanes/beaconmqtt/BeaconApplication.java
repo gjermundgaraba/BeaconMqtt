@@ -83,6 +83,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     }
 
     public void restartBeaconSearch() {
+        beaconsInRange = new ArrayList<>();
         startSearchForBeacons();
     }
 

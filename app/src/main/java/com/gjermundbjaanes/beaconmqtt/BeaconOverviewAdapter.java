@@ -102,35 +102,44 @@ public class BeaconOverviewAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         View rowView = layoutInflater.inflate(R.layout.list_beacon_layout, parent, false);
 
-        BeaconResult beacon;
+        BeaconResult beacon = null;
         if (groupPosition == 0) {
-             beacon = savedBeacons.get(childPosition);
+            beacon = savedBeacons.get(childPosition);
         } else {
-            beacon = beaconsInRange.get(childPosition);
+            if ((beaconsInRange.size()-1) >= childPosition) {
+                beacon = beaconsInRange.get(childPosition);
+            }
         }
 
-        TextView nameView = (TextView) rowView.findViewById(R.id.beacon_name);
-        nameView.setText(beacon.getInformalName());
+        if (beacon != null) {
+            TextView nameView = (TextView) rowView.findViewById(R.id.beacon_name);
+            nameView.setText(beacon.getInformalName());
 
-        TextView uuidView = (TextView) rowView.findViewById(R.id.beacon_uuid);
-        uuidView.setText(beacon.getUuid());
+            TextView uuidView = (TextView) rowView.findViewById(R.id.beacon_uuid);
+            uuidView.setText(beacon.getUuid());
 
-        TextView detailsView = (TextView) rowView.findViewById(R.id.beacon_details);
-        String details = "Major: " + beacon.getMajor() + " Minor: " + beacon.getMinor();
-        detailsView.setText(details);
+            TextView detailsView = (TextView) rowView.findViewById(R.id.beacon_details);
+            String details = "Major: " + beacon.getMajor() + " Minor: " + beacon.getMinor();
+            detailsView.setText(details);
 
-        Button deleteButton = (Button) rowView.findViewById(R.id.delete_beacon_button);
-        final BeaconResult finalBeacon = beacon;
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeleteClickListener != null) {
-                    onDeleteClickListener.onBeaconDeleteClick(finalBeacon);
-                }
+            Button deleteButton = (Button) rowView.findViewById(R.id.delete_beacon_button);
+            if (groupPosition == 0) {
+                final BeaconResult finalBeacon = beacon;
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (onDeleteClickListener != null) {
+                            onDeleteClickListener.onBeaconDeleteClick(finalBeacon);
+                        }
+                    }
+                });
+            } else {
+                ((ViewGroup) deleteButton.getParent()).removeView(deleteButton);
             }
-        });
+            return rowView;
+        }
 
-        return rowView;
+        return null;
     }
 
     @Override
