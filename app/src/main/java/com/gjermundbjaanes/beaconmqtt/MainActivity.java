@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<BeaconResult> beacons = new BeaconPersistence(this).getBeacons();
-        ListView beaconOverviewListView = (ListView) findViewById(R.id.beacon_overview_list);
+        ExpandableListView beaconOverviewListView = (ExpandableListView) findViewById(R.id.beacon_overview_list);
         beaconOverviewAdapter = new BeaconOverviewAdapter(this, beacons);
         beaconOverviewAdapter.setOnDeleteClickListener(new BeaconOverviewAdapter.OnDeleteClickListener() {
             @Override
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 BeaconPersistence beaconPersistence = new BeaconPersistence(MainActivity.this);
                                 boolean beaconDeleted = beaconPersistence.deleteBeacon(beaconResult);
                                 if (beaconDeleted) {
-                                    beaconOverviewAdapter.updateBeacons(beaconPersistence.getBeacons());
+                                    beaconOverviewAdapter.updateSavedBeacons(beaconPersistence.getBeacons());
                                 } else {
                                     Toast.makeText(MainActivity.this, "Not able to delete beacon", Toast.LENGTH_LONG).show();
                                 }
@@ -89,6 +89,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         beaconOverviewListView.setAdapter(beaconOverviewAdapter);
+
+        beaconOverviewListView.expandGroup(0);
+        beaconOverviewListView.expandGroup(1);
+
+        BeaconApplication beaconApplication = (BeaconApplication) getApplication();
+        beaconApplication.setBeaconInRangeListener(new BeaconApplication.BeaconInRangeListener() {
+            @Override
+            public void beaconsInRangeChanged(final List<BeaconResult> beacons) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        beaconOverviewAdapter.updateBeaconsInRange(beacons);
+                    }
+                });
+            }
+        });
     }
 
     @Override

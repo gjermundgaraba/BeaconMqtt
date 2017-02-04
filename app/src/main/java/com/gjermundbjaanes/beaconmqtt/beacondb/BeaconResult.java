@@ -29,4 +29,19 @@ public class BeaconResult {
     public String getInformalName() {
         return informalName;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BeaconResult) {
+            BeaconResult other = (BeaconResult) obj;
+            return this.uuid.equals(other.getUuid()) && this.major.equals(other.getMajor()) && this.minor.equals(other.getMinor());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (41 * (41 + (uuid + major + minor).hashCode()));
+    }
 }
