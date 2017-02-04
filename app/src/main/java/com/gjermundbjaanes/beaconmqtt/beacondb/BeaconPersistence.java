@@ -93,7 +93,7 @@ public class BeaconPersistence {
 
             Cursor cursor = db.query(TABLE_NAME, columns, PRIMARY_KEY_SELECTION, new String[] {uuid, major, minor}, null, null, null);
 
-            if (cursor != null) {
+            if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 String informalName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_INFORMAL_NAME));
                 cursor.close();

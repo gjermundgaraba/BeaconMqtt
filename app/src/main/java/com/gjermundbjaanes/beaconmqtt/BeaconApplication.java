@@ -79,6 +79,14 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         Long beaconScanPeriod = Long.parseLong(defaultSharedPreferences.getString(BEACON_SCAN_PERIOD_KEY, Long.valueOf(DEFAULT_BACKGROUND_SCAN_PERIOD).toString()));
         beaconManager.setBackgroundScanPeriod(beaconScanPeriod);
 
+        startSearchForBeacons();
+    }
+
+    public void restartBeaconSearch() {
+        startSearchForBeacons();
+    }
+
+    private void startSearchForBeacons() {
         List<BeaconResult> beacons = beaconPersistence.getBeacons();
 
         List<Region> regions = new ArrayList<>(beacons.size());
@@ -119,20 +127,22 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         mqttBroadcaster.publisMessage(uuid, major, minor, "enter");
 
         BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
-        beaconsInRange.add(beacon);
-        if (beaconInRangeListener != null) {
-            beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
-        }
-
-        boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
-        if (showNotification) {
-
-            String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
-            if (beacon != null && beacon.getInformalName() != null) {
-                message = beacon.getInformalName() + " " +  message;
+        if (beacon != null) {
+            beaconsInRange.add(beacon);
+            if (beaconInRangeListener != null) {
+                beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
             }
 
-            showNotification("Beacon spotted!", message);
+            boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
+            if (showNotification) {
+
+                String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+                if (beacon != null && beacon.getInformalName() != null) {
+                    message = beacon.getInformalName() + " " +  message;
+                }
+
+                showNotification("Beacon spotted!", message);
+            }
         }
     }
 
@@ -146,20 +156,22 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         mqttBroadcaster.publisMessage(uuid, major, minor, "exit");
 
         BeaconResult beacon = beaconPersistence.getBeacon(uuid, major, minor);
-        beaconsInRange.remove(beacon);
-        if (beaconInRangeListener != null) {
-            beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
-        }
-
-        boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
-        if (showNotification) {
-
-            String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
-            if (beacon != null && beacon.getInformalName() != null) {
-                message = beacon.getInformalName() + " " +  message;
+        if (beacon != null) {
+            beaconsInRange.remove(beacon);
+            if (beaconInRangeListener != null) {
+                beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
             }
 
-            showNotification("Beacon lost!", message);
+            boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
+            if (showNotification) {
+
+                String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+                if (beacon != null && beacon.getInformalName() != null) {
+                    message = beacon.getInformalName() + " " +  message;
+                }
+
+                showNotification("Beacon lost!", message);
+            }
         }
     }
 

@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
                                 boolean beaconDeleted = beaconPersistence.deleteBeacon(beaconResult);
                                 if (beaconDeleted) {
                                     beaconOverviewAdapter.updateSavedBeacons(beaconPersistence.getBeacons());
+                                    ((BeaconApplication) getApplication()).restartBeaconSearch();
+
                                 } else {
                                     Toast.makeText(MainActivity.this, "Not able to delete beacon", Toast.LENGTH_LONG).show();
                                 }

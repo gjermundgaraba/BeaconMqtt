@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.gjermundbjaanes.beaconmqtt.BeaconApplication;
 import com.gjermundbjaanes.beaconmqtt.R;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
@@ -83,13 +84,11 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
                                 beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
                                 persistedBeaconList = beaconPersistence.getBeacons();
+                                ((BeaconApplication) getApplication()).restartBeaconSearch();
                             }
                         })
                         .setNegativeButton(R.string.dialog_cancel_beacon, null)
                         .show();
-
-
-
             }
         });
 
@@ -202,6 +201,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
                             beaconPersistence.saveBeacon(beaconUuid, beaconMajor, beaconMinor, informalBeaconName);
                             persistedBeaconList = beaconPersistence.getBeacons();
+                            ((BeaconApplication) getApplication()).restartBeaconSearch();
                         }
                     })
                     .setNegativeButton(R.string.dialog_cancel_beacon, null)
