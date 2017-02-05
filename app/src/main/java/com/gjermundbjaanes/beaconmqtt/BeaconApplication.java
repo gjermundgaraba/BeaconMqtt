@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconPersistence;
 import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconResult;
-import com.gjermundbjaanes.beaconmqtt.db.log.LogPerstiance;
+import com.gjermundbjaanes.beaconmqtt.db.log.LogPersistence;
 import com.gjermundbjaanes.beaconmqtt.mqtt.MqttBroadcaster;
 
 import org.altbeacon.beacon.BeaconManager;
@@ -39,7 +39,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     private static final String TAG = BeaconApplication.class.getName();
 
     private BeaconPersistence beaconPersistence = new BeaconPersistence(this);
-    private LogPerstiance logPerstiance = new LogPerstiance(this);
+    private LogPersistence logPersistence = new LogPersistence(this);
     private RegionBootstrap regionBootstrap; // Needs to be here
     private SharedPreferences.OnSharedPreferenceChangeListener listener; // Needs to be here
     private MqttBroadcaster mqttBroadcaster;
@@ -151,7 +151,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
 
             boolean logEvent = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
             if (logEvent) {
-                logPerstiance.saveNewLog(message, "");
+                logPersistence.saveNewLog(message, "");
             }
         }
     }
@@ -187,7 +187,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
 
             boolean logEvent = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
             if (logEvent) {
-                logPerstiance.saveNewLog(message, "");
+                logPersistence.saveNewLog(message, "");
             }
         }
     }

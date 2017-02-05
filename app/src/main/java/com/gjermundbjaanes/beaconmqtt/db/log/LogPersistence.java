@@ -16,11 +16,11 @@ import static com.gjermundbjaanes.beaconmqtt.db.log.LogContract.LogEntry.COLUMN_
 import static com.gjermundbjaanes.beaconmqtt.db.log.LogContract.LogEntry.TABLE_NAME;
 
 
-public class LogPerstiance {
+public class LogPersistence {
 
     private final DbHelper dbHelper;
 
-    public LogPerstiance(Context context) {
+    public LogPersistence(Context context) {
         dbHelper = new DbHelper(context);
     }
 
@@ -71,4 +71,15 @@ public class LogPerstiance {
         }
     }
 
+    public void deleteAllLogs() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        try {
+            db.delete(TABLE_NAME, null, null);
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
 }

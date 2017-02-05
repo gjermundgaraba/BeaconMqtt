@@ -24,6 +24,8 @@
     <string name="pref_title_beacon_period_between_scans">Miliseconds Between Scans</string>
     <string name="pref_title_beacon_scan_period">Miliseconds Spent On Scan</string>
 
+    <!-- Strings releated to Log Activity -->
+    <string name="delete_all_logs_menu">Delete All Logs</string>
 
     <!-- String related to new beacon -->
     <string name="new_beacon_add_manually_menu">Add Beacon Manually</string>
