@@ -15,6 +15,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.R;
 
@@ -241,6 +242,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            findPreference(GENEARL_LOG_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if ((boolean) newValue) {
+                        Toast.makeText(preference.getContext(), "The log can use a lot of disk space, so it's advised to turn it off after use.", Toast.LENGTH_LONG).show();
+                    }
+
+                    return true;
+                }
+            });
         }
 
         @Override
