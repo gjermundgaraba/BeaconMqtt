@@ -8,7 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,10 +136,9 @@ public class BeaconOverviewAdapter extends BaseExpandableListAdapter {
             } else {
                 ((ViewGroup) deleteButton.getParent()).removeView(deleteButton);
             }
-            return rowView;
         }
 
-        return null;
+        return rowView;
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.gjermundbjaanes.beaconmqtt.newbeacon;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.design.widget.Snackbar;
@@ -21,9 +19,8 @@ import android.widget.TextView;
 
 import com.gjermundbjaanes.beaconmqtt.BeaconApplication;
 import com.gjermundbjaanes.beaconmqtt.R;
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
-import com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconPersistence;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconResult;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;

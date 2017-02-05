@@ -18,8 +18,9 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconPersistence;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.log.LogActivity;
 import com.gjermundbjaanes.beaconmqtt.newbeacon.NewBeaconActivity;
 import com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity;
 
@@ -157,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             this.startActivity(settingsIntent);
+            return true;
+        } else if (id == R.id.action_log) {
+            Intent logIntent = new Intent(this, LogActivity.class);
+            this.startActivity(logIntent);
             return true;
         }
 

@@ -33,10 +33,13 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    public static final String GENEARL_LOG_KEY = "general_create_log";
+
     public static final String MQTT_SERVER_KEY = "mqtt_server";
     public static final String MQTT_PORT_KEY = "mqtt_port";
     public static final String MQTT_ENTER_TOPIC_KEY = "mqtt_enter_topic";
     public static final String MQTT_EXIT_TOPIC_KEY = "mqtt_exit_topic";
+
     public static final String BEACON_NOTIFICATIONS_ENTER_KEY = "beacon_notifications_enter";
     public static final String BEACON_NOTIFICATIONS_EXIT_KEY = "beacon_notifications_exit";
     public static final String BEACON_PERIOD_BETWEEN_SCANS_KEY = "beacon_period_between_scans";
@@ -154,7 +157,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || MqttPreferenceFragment.class.getName().equals(fragmentName)
-                || BeaconPreferenceFragment.class.getName().equals(fragmentName);
+                || BeaconPreferenceFragment.class.getName().equals(fragmentName)
+                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -208,6 +212,35 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(BEACON_PERIOD_BETWEEN_SCANS_KEY));
             bindPreferenceSummaryToValue(findPreference(BEACON_SCAN_PERIOD_KEY));
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * This fragment shows general preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class GeneralPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_general);
+            setHasOptionsMenu(true);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
         }
 
         @Override

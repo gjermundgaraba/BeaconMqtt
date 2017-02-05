@@ -1,32 +1,34 @@
-package com.gjermundbjaanes.beaconmqtt.beacondb;
+package com.gjermundbjaanes.beaconmqtt.db.beacon;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.gjermundbjaanes.beaconmqtt.db.DbHelper;
+
 import org.altbeacon.beacon.Beacon;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME;
-import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR;
-import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_MINOR;
-import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.COLUMN_NAME_UUID;
-import static com.gjermundbjaanes.beaconmqtt.beacondb.BeaconContract.BeaconEntry.TABLE_NAME;
+import static com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconContract.BeaconEntry.COLUMN_NAME_INFORMAL_NAME;
+import static com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconContract.BeaconEntry.COLUMN_NAME_MAJOR;
+import static com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconContract.BeaconEntry.COLUMN_NAME_MINOR;
+import static com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconContract.BeaconEntry.COLUMN_NAME_UUID;
+import static com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconContract.BeaconEntry.TABLE_NAME;
 
 public class BeaconPersistence {
 
     private static final String PRIMARY_KEY_SELECTION = COLUMN_NAME_UUID + "=? AND " + COLUMN_NAME_MAJOR + "=? AND " + COLUMN_NAME_MINOR + "=?";
-    private final BeaconDbHelper beaconDbHelper;
+    private final DbHelper dbHelper;
 
     public BeaconPersistence(Context context) {
-        beaconDbHelper = new BeaconDbHelper(context);
+        dbHelper = new DbHelper(context);
     }
 
     public List<BeaconResult> getBeacons() {
-        SQLiteDatabase db = beaconDbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         try {
             String[] columns = {
@@ -62,7 +64,7 @@ public class BeaconPersistence {
     }
 
     public void saveBeacon(String uuid, String major, String minor, String informalBeaconName) {
-        SQLiteDatabase db = beaconDbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             ContentValues values = new ContentValues();
@@ -81,7 +83,7 @@ public class BeaconPersistence {
     }
 
     public BeaconResult getBeacon(String uuid, String major, String minor) {
-        SQLiteDatabase db = beaconDbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         try {
             String[] columns = {
@@ -111,7 +113,7 @@ public class BeaconPersistence {
     }
 
     public boolean deleteBeacon(BeaconResult beaconResult) {
-        SQLiteDatabase db = beaconDbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             int numberOfRowsAffected = db.delete(TABLE_NAME, PRIMARY_KEY_SELECTION, new String[] {beaconResult.getUuid(), beaconResult.getMajor(), beaconResult.getMinor()});

@@ -1,4 +1,4 @@
-package com.gjermundbjaanes.beaconmqtt.beacondb;
+package com.gjermundbjaanes.beaconmqtt.db.beacon;
 
 public class BeaconResult {
 

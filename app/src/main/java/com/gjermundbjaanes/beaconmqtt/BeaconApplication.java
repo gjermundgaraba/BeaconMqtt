@@ -11,8 +11,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconPersistence;
-import com.gjermundbjaanes.beaconmqtt.beacondb.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconPersistence;
+import com.gjermundbjaanes.beaconmqtt.db.beacon.BeaconResult;
+import com.gjermundbjaanes.beaconmqtt.db.log.LogPerstiance;
 import com.gjermundbjaanes.beaconmqtt.mqtt.MqttBroadcaster;
 
 import org.altbeacon.beacon.BeaconManager;
@@ -29,6 +30,7 @@ import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_NO
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_NOTIFICATIONS_EXIT_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_PERIOD_BETWEEN_SCANS_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.BEACON_SCAN_PERIOD_KEY;
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.GENEARL_LOG_KEY;
 import static org.altbeacon.beacon.BeaconManager.DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD;
 import static org.altbeacon.beacon.BeaconManager.DEFAULT_BACKGROUND_SCAN_PERIOD;
 
@@ -37,6 +39,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     private static final String TAG = BeaconApplication.class.getName();
 
     private BeaconPersistence beaconPersistence = new BeaconPersistence(this);
+    private LogPerstiance logPerstiance = new LogPerstiance(this);
     private RegionBootstrap regionBootstrap; // Needs to be here
     private SharedPreferences.OnSharedPreferenceChangeListener listener; // Needs to be here
     private MqttBroadcaster mqttBroadcaster;
@@ -134,15 +137,21 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
                 beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
             }
 
+            String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+
             boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_ENTER_KEY, false);
             if (showNotification) {
 
-                String message = "Entered region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
                 if (beacon.getInformalName() != null) {
                     message = beacon.getInformalName() + " " +  message;
                 }
 
                 showNotification("Beacon spotted!", message);
+            }
+
+            boolean logEvent = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
+            if (logEvent) {
+                logPerstiance.saveNewLog(message, "");
             }
         }
     }
@@ -163,15 +172,22 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
                 beaconInRangeListener.beaconsInRangeChanged(beaconsInRange);
             }
 
+            String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+
             boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(BEACON_NOTIFICATIONS_EXIT_KEY, false);
             if (showNotification) {
 
-                String message = "Exited region uuid: " + uuid + ", major: " + major + ", minor: " + minor;
+
                 if (beacon.getInformalName() != null) {
                     message = beacon.getInformalName() + " " +  message;
                 }
 
                 showNotification("Beacon lost!", message);
+            }
+
+            boolean logEvent = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
+            if (logEvent) {
+                logPerstiance.saveNewLog(message, "");
             }
         }
     }
