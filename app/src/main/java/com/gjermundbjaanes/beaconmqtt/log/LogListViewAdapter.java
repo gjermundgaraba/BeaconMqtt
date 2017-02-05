@@ -50,4 +50,9 @@ public class LogListViewAdapter extends BaseAdapter {
 
         return rowView;
     }
+
+    public void updateLogs(List<LogResult> refreshLogs) {
+        this.logs = refreshLogs;
+        notifyDataSetChanged();
+    }
 }

@@ -2,6 +2,7 @@ package com.gjermundbjaanes.beaconmqtt.log;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
@@ -30,15 +31,24 @@ public class LogActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        final LogPerstiance logPerstiance = new LogPerstiance(this);
+
         logListView = (ListView) findViewById(R.id.log_list);
-
-        List<LogResult> logs = new LogPerstiance(this).getLogs();
-        LogListViewAdapter logListViewAdapter = new LogListViewAdapter(logs, this);
-
+        List<LogResult> logs = logPerstiance.getLogs();
+        final LogListViewAdapter logListViewAdapter = new LogListViewAdapter(logs, this);
         logListView.setAdapter(logListViewAdapter);
 
-        boolean loggingOn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.log_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                List<LogResult> refreshLogs = logPerstiance.getLogs();
+                logListViewAdapter.updateLogs(refreshLogs);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
+        boolean loggingOn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
         if (!loggingOn) {
             Toast.makeText(this, "Logging is turned off, go to settings to turn it on.", Toast.LENGTH_LONG).show();
         }
