@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.gjermundbjaanes.beaconmqtt.db.log.LogPersistence;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -16,6 +18,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.GENEARL_LOG_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_ENTER_TOPIC_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_EXIT_TOPIC_KEY;
 import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.MQTT_PORT_KEY;
@@ -30,8 +33,10 @@ public class MqttBroadcaster {
 
     private MqttAndroidClient mqttAndroidClient = null;
     private final SharedPreferences defaultSharedPreferences;
+    private final LogPersistence logPersistence;
 
     public MqttBroadcaster(final Context context) {
+        logPersistence = new LogPersistence(context);
         defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         String mqttServer = defaultSharedPreferences.getString(MQTT_SERVER_KEY, null);
@@ -110,6 +115,12 @@ public class MqttBroadcaster {
                 MqttMessage mqttMessage = new MqttMessage();
                 mqttMessage.setPayload(jsonObject.toString().getBytes());
                 mqttAndroidClient.publish(topic, mqttMessage);
+
+                boolean logEvent = defaultSharedPreferences.getBoolean(GENEARL_LOG_KEY, false);
+                if (logEvent) {
+                    String logMessage = "Published MQTT message: " + mqttMessage + " to topic: " + topic;
+                    logPersistence.saveNewLog(logMessage, "");
+                }
             } catch (MqttException | JSONException e) {
                 Log.e(TAG, "Error Publishing on topic: " + topic, e);
             }
