@@ -4,18 +4,18 @@
 
     <header
         android:fragment="com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"
+        android:icon="@drawable/ic_build_black_24dp"
         android:title="@string/pref_header_general" />
 
 
     <header
         android:fragment="com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity$MqttPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"
+        android:icon="@drawable/ic_speaker_phone_black_24dp"
         android:title="@string/pref_header_mqtt" />
 
     <header
         android:fragment="com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity$BeaconPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/ic_bluetooth_black_24dp"
         android:title="@string/pref_header_notifications" />
 
 </preference-headers>
