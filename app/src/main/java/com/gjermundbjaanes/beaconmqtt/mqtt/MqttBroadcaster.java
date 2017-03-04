@@ -67,27 +67,23 @@ public class MqttBroadcaster {
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(false);
 
-            try {
-                mqttAndroidClient.connect(mqttConnectOptions, context, new IMqttActionListener() {
+            mqttAndroidClient.connect(mqttConnectOptions, context, new IMqttActionListener() {
 
-                    @Override
-                    public void onSuccess(IMqttToken asyncActionToken) {
-                        DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
-                        disconnectedBufferOptions.setBufferEnabled(true);
-                        disconnectedBufferOptions.setBufferSize(100);
-                        disconnectedBufferOptions.setPersistBuffer(false);
-                        disconnectedBufferOptions.setDeleteOldestMessages(false);
-                        mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
-                    }
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                    disconnectedBufferOptions.setBufferEnabled(true);
+                    disconnectedBufferOptions.setBufferSize(100);
+                    disconnectedBufferOptions.setPersistBuffer(false);
+                    disconnectedBufferOptions.setDeleteOldestMessages(false);
+                    mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+                }
 
-                    @Override
-                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        Log.e(TAG, "Failed to connect to: " + serverUri, exception);
-                    }
-                });
-            } catch (MqttException e) {
-                Log.e(TAG, "Failed to connect to: " + e);
-            }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.e(TAG, "Failed to connect to: " + serverUri, exception);
+                }
+            });
 
         } else {
             Log.i(TAG, "Mqtt Server or Port not set");
@@ -121,7 +117,7 @@ public class MqttBroadcaster {
                     String logMessage = "Published MQTT message: " + mqttMessage + " to topic: " + topic;
                     logPersistence.saveNewLog(logMessage, "");
                 }
-            } catch (MqttException | JSONException e) {
+            } catch (JSONException e) {
                 Log.e(TAG, "Error Publishing on topic: " + topic, e);
             }
         } else {
