@@ -38,4 +38,10 @@
     <string name="dialog_new_beacon_major">Beacon Major</string>
     <string name="dialog_new_beacon_minor">Beacon Minor</string>
     <string name="title_activity_log">LogActivity</string>
+
+    <string name="beacon_spotted_notification_title">Beacon spotted!</string>
+    <string name="beacon_exit_notification_title">Beacon lost!</string>
+    <string name="beacon_spotted_notification_message">Entered region uuid: %1$s, major: %2$s, minor: %3$s</string>
+    <string name="beacon_exit_notification_message">Exited region uuid: %1$s, major: %2$s, minor: %3$s</string>
+    <string name="not_able_to_start_monitoring_for_beacon_error_1">Not able to start monitoring for beacon with</string>
 </resources>
