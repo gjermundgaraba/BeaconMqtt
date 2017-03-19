@@ -44,4 +44,12 @@
     <string name="beacon_spotted_notification_message">Entered region uuid: %1$s, major: %2$s, minor: %3$s</string>
     <string name="beacon_exit_notification_message">Exited region uuid: %1$s, major: %2$s, minor: %3$s</string>
     <string name="not_able_to_start_monitoring_for_beacon_error_1">Not able to start monitoring for beacon with</string>
+
+    <!-- String related to MqttBroadcaster -->
+    <string name="failed_to_connect_mqtt_server">Failed to connect to: %1$s</string>
+    <string name="mqtt_missing_server_or_port">Mqtt Server or Port not set, not connected to any mqtt server</string>
+    <string name="published_mqtt_message_to_topic">Published MQTT message: %1$s to topic: %2$s</string>
+    <string name="error_publishing_on_topic">Error Publishing on topic: %1$s</string>
+    <string name="publish_failed_not_set_up">Publish not done because mqttAndroidClient is not set up</string>
+
 </resources>
