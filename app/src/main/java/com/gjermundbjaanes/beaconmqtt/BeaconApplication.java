@@ -62,6 +62,11 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         startSearchForBeacons();
     }
 
+    public void restartBeaconSearch() {
+        beaconsInRange = new ArrayList<>();
+        startSearchForBeacons();
+    }
+
     @NonNull
     private BeaconManager setUpBeaconManager() {
         final BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
@@ -73,14 +78,6 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
         return beaconManager;
-    }
-
-    private void setUpScanningSettings(BeaconManager beaconManager, SharedPreferences defaultSharedPreferences) {
-        Long beaconPeriodBetweenScans = Long.parseLong(defaultSharedPreferences.getString(BEACON_PERIOD_BETWEEN_SCANS_KEY, Long.valueOf(DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD).toString()));
-        beaconManager.setBackgroundBetweenScanPeriod(beaconPeriodBetweenScans);
-
-        Long beaconScanPeriod = Long.parseLong(defaultSharedPreferences.getString(BEACON_SCAN_PERIOD_KEY, Long.valueOf(DEFAULT_BACKGROUND_SCAN_PERIOD).toString()));
-        beaconManager.setBackgroundScanPeriod(beaconScanPeriod);
     }
 
     private void setUpSettingsChangedListener(final BeaconManager beaconManager, SharedPreferences defaultSharedPreferences) {
@@ -99,9 +96,12 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public void restartBeaconSearch() {
-        beaconsInRange = new ArrayList<>();
-        startSearchForBeacons();
+    private void setUpScanningSettings(BeaconManager beaconManager, SharedPreferences defaultSharedPreferences) {
+        Long beaconPeriodBetweenScans = Long.parseLong(defaultSharedPreferences.getString(BEACON_PERIOD_BETWEEN_SCANS_KEY, Long.valueOf(DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD).toString()));
+        beaconManager.setBackgroundBetweenScanPeriod(beaconPeriodBetweenScans);
+
+        Long beaconScanPeriod = Long.parseLong(defaultSharedPreferences.getString(BEACON_SCAN_PERIOD_KEY, Long.valueOf(DEFAULT_BACKGROUND_SCAN_PERIOD).toString()));
+        beaconManager.setBackgroundScanPeriod(beaconScanPeriod);
     }
 
     private void startSearchForBeacons() {
@@ -233,7 +233,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
         this.beaconInRangeListener = beaconInRangeListener;
     }
 
-    public interface BeaconInRangeListener {
+    interface BeaconInRangeListener {
         void beaconsInRangeChanged(List<BeaconResult> beacons);
     }
 }
