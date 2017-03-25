@@ -39,10 +39,10 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
 
     private static final String TAG = BeaconApplication.class.getName();
 
+    private RegionBootstrap regionBootstrap; // Needs to be here even if not used (altbeacon requirement)
+    private SharedPreferences.OnSharedPreferenceChangeListener listener; // Needs to be here even if not used (altbeacon requirement)
     private BeaconPersistence beaconPersistence = new BeaconPersistence(this);
     private LogPersistence logPersistence = new LogPersistence(this);
-    private RegionBootstrap regionBootstrap; // Needs to be here
-    private SharedPreferences.OnSharedPreferenceChangeListener listener; // Needs to be here
     private MqttBroadcaster mqttBroadcaster;
     private List<BeaconResult> beaconsInRange = new ArrayList<>();
     private BeaconInRangeListener beaconInRangeListener = null;
