@@ -23,7 +23,6 @@ import static com.gjermundbjaanes.beaconmqtt.settings.SettingsActivity.GENEARL_L
 
 public class LogActivity extends AppCompatActivity {
 
-    private ListView logListView;
     private LogListViewAdapter logListViewAdapter;
 
     @Override
@@ -33,11 +32,13 @@ public class LogActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         final LogPersistence logPersistence = new LogPersistence(this);
 
-        logListView = (ListView) findViewById(R.id.log_list);
+        ListView logListView = (ListView) findViewById(R.id.log_list);
         List<LogResult> logs = logPersistence.getLogs();
         logListViewAdapter = new LogListViewAdapter(logs, this);
         logListView.setAdapter(logListViewAdapter);
@@ -54,7 +55,7 @@ public class LogActivity extends AppCompatActivity {
 
         boolean loggingOn = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(GENEARL_LOG_KEY, false);
         if (!loggingOn) {
-            Toast.makeText(this, "Logging is turned off, go to settings to turn it on.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.logging_turned_off_message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -76,16 +77,16 @@ public class LogActivity extends AppCompatActivity {
         if (id == R.id.action_delete_all_logs) {
             AlertDialog.Builder builder = new AlertDialog.Builder(LogActivity.this);
 
-            builder.setTitle("Confirm deletion of all log entries")
-                    .setMessage("Are you sure you want to delete all log entries?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.delete_logs_title)
+                    .setMessage(R.string.delete_logs_message)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new LogPersistence(LogActivity.this).deleteAllLogs();
                             logListViewAdapter.updateLogs(new ArrayList<LogResult>());
                         }
                     })
-                    .setNegativeButton("No", null)
+                    .setNegativeButton(R.string.no, null)
                     .show();
         }
 

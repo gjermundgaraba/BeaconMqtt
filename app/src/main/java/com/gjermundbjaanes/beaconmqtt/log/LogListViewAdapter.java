@@ -61,18 +61,18 @@ public class LogListViewAdapter extends BaseAdapter {
         return rowView;
     }
 
-    public void updateLogs(List<LogResult> refreshLogs) {
+    void updateLogs(List<LogResult> refreshLogs) {
         this.logs = refreshLogs;
 
         Collections.sort(this.logs, new Comparator<LogResult>() {
             @Override
-            public int compare(LogResult o1, LogResult o2) {
+            public int compare(LogResult logResult, LogResult otherLogResult) {
                 SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 int compare = 0;
                 try {
-                    Date firstDate = iso8601Format.parse(o1.getTime());
-                    Date secondDate = iso8601Format.parse(o2.getTime());
+                    Date firstDate = iso8601Format.parse(logResult.getTime());
+                    Date secondDate = iso8601Format.parse(otherLogResult.getTime());
 
                     if (firstDate.before(secondDate)) {
                         compare = 1;

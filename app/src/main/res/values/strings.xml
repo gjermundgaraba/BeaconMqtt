@@ -51,5 +51,10 @@
     <string name="published_mqtt_message_to_topic">Published MQTT message: %1$s to topic: %2$s</string>
     <string name="error_publishing_on_topic">Error Publishing on topic: %1$s</string>
     <string name="publish_failed_not_set_up">Publish not done because mqttAndroidClient is not set up</string>
+    <string name="delete_logs_title">Confirm deletion of all log entries</string>
+    <string name="delete_logs_message">Are you sure you want to delete all log entries?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="logging_turned_off_message">Logging is turned off, go to settings to turn it on.</string>
 
 </resources>
