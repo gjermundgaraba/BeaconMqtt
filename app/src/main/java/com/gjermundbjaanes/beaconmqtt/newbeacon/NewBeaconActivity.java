@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,14 +49,21 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_beacon);
+
+        setUpToolBar();
+        setUpBeaconList();
+    }
+
+    private void setUpToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
 
-
+    private void setUpBeaconList() {
         beaconSearchListView = (ListView) findViewById(R.id.beacon_search_list);
 
         beaconListAdapter = new BeaconListAdapter(this);
@@ -64,32 +72,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         beaconPersistence = new BeaconPersistence(this);
         persistedBeaconList = beaconPersistence.getBeacons();
 
-        beaconSearchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                final BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
-
-                if (!beaconListElement.isSaved()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
-                    LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
-                    final View dialogLayout = inflater.inflate(R.layout.dialog_new_beacon, null);
-                    builder.setView(dialogLayout)
-                            .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.dailog_new_beacon_name);
-                                    String informalBeaconName = newBeaconNameTextView.getText().toString();
-
-                                    beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
-                                    persistedBeaconList = beaconPersistence.getBeacons();
-                                    ((BeaconApplication) getApplication()).restartBeaconSearch();
-                                }
-                            })
-                            .setNegativeButton(R.string.dialog_cancel_beacon, null)
-                            .show();
-                }
-            }
-        });
+        beaconSearchListView.setOnItemClickListener(new OnBeaconClickListener());
 
         beaconManager.bind(this);
     }
@@ -117,6 +100,10 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         beaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                handleNewBeaconsInRange(beacons);
+            }
+
+            private void handleNewBeaconsInRange(Collection<Beacon> beacons) {
                 final List<BeaconListElement> beaconsList = new ArrayList<>();
 
                 for (Beacon beacon : beacons) {
@@ -134,14 +121,14 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
             private BeaconListElement beaconToBeaconListElement(Beacon beacon) {
                 BeaconListElement beaconListElement = new BeaconListElement(beacon);
 
-                if (beaconSaved(beacon)) {
+                if (beaconIsSaved(beacon)) {
                     beaconListElement.setSaved(true);
                 }
 
                 return beaconListElement;
             }
 
-            private boolean beaconSaved(Beacon beacon) {
+            private boolean beaconIsSaved(Beacon beacon) {
                 for (BeaconResult beaconResult : persistedBeaconList) {
                     if (beacon.getId1().toString().equals(beaconResult.getUuid()) &&
                             beacon.getId2().toString().equals(beaconResult.getMajor()) &&
@@ -157,7 +144,7 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
         try {
             beaconManager.startRangingBeaconsInRegion(new Region(REGION_ID_FOR_RANGING, null, null, null));
         } catch (RemoteException e) {
-            String errorMessage = "Not able to start ranging beacons";
+            String errorMessage = getString(R.string.not_able_to_start_ranging_beacons);
             Log.e(TAG, errorMessage, e);
             Snackbar.make(this.beaconSearchListView, errorMessage, Snackbar.LENGTH_LONG).show();
         }
@@ -165,7 +152,6 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.new_beacon_menu, menu);
         return true;
     }
@@ -179,35 +165,79 @@ public class NewBeaconActivity extends AppCompatActivity implements BeaconConsum
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_add_beacon_manually) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
-            LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
-            final View dialogLayout = inflater.inflate(R.layout.dialog_new_manual_beacon, null);
-            builder.setView(dialogLayout)
-                    .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_name);
-                            String informalBeaconName = newBeaconNameTextView.getText().toString();
-
-                            TextView newBeaconUuidTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_uuid);
-                            String beaconUuid = newBeaconUuidTextView.getText().toString();
-
-                            TextView newBeaconMajorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_major);
-                            String beaconMajor = newBeaconMajorTextView.getText().toString();
-
-                            TextView newBeaconMinorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_minor);
-                            String beaconMinor = newBeaconMinorTextView.getText().toString();
-
-                            beaconPersistence.saveBeacon(beaconUuid, beaconMajor, beaconMinor, informalBeaconName);
-                            persistedBeaconList = beaconPersistence.getBeacons();
-                            ((BeaconApplication) getApplication()).restartBeaconSearch();
-                        }
-                    })
-                    .setNegativeButton(R.string.dialog_cancel_beacon, null)
-                    .show();
+            AlertDialog.Builder builder = createAlertDialog();
+            builder.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @NonNull
+    private AlertDialog.Builder createAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
+        LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
+        final View dialogLayout = inflater.inflate(R.layout.dialog_new_manual_beacon, null);
+        builder.setView(dialogLayout)
+                .setPositiveButton(R.string.dialog_save_beacon, new SaveBeaconClickListener(dialogLayout))
+                .setNegativeButton(R.string.dialog_cancel_beacon, null);
+        return builder;
+    }
+
+    private class OnBeaconClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            final BeaconListElement beaconListElement = (BeaconListElement) beaconSearchListView.getItemAtPosition(position);
+
+            if (!beaconListElement.isSaved()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(NewBeaconActivity.this);
+                LayoutInflater inflater = NewBeaconActivity.this.getLayoutInflater();
+                final View dialogLayout = inflater.inflate(R.layout.dialog_new_beacon, null);
+                builder.setView(dialogLayout)
+                        .setPositiveButton(R.string.dialog_save_beacon, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveBeacon();
+                            }
+
+                            private void saveBeacon() {
+                                TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.dailog_new_beacon_name);
+                                String informalBeaconName = newBeaconNameTextView.getText().toString();
+
+                                beaconPersistence.saveBeacon(beaconListElement.getBeacon(), informalBeaconName);
+                                persistedBeaconList = beaconPersistence.getBeacons();
+                                ((BeaconApplication) getApplication()).restartBeaconSearch();
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_cancel_beacon, null)
+                        .show();
+            }
+        }
+    }
+
+    private class SaveBeaconClickListener implements DialogInterface.OnClickListener {
+        private final View dialogLayout;
+
+        SaveBeaconClickListener(View dialogLayout) {
+            this.dialogLayout = dialogLayout;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            TextView newBeaconNameTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_name);
+            String informalBeaconName = newBeaconNameTextView.getText().toString();
+
+            TextView newBeaconUuidTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_uuid);
+            String beaconUuid = newBeaconUuidTextView.getText().toString();
+
+            TextView newBeaconMajorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_major);
+            String beaconMajor = newBeaconMajorTextView.getText().toString();
+
+            TextView newBeaconMinorTextView = (TextView) dialogLayout.findViewById(R.id.manual_dailog_new_beacon_minor);
+            String beaconMinor = newBeaconMinorTextView.getText().toString();
+
+            beaconPersistence.saveBeacon(beaconUuid, beaconMajor, beaconMinor, informalBeaconName);
+            persistedBeaconList = beaconPersistence.getBeacons();
+            ((BeaconApplication) getApplication()).restartBeaconSearch();
+        }
+    }
 }

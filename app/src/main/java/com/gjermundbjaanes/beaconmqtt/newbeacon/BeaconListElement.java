@@ -7,27 +7,27 @@ public class BeaconListElement {
     private boolean saved = false;
     private Beacon beacon;
 
-    public BeaconListElement(Beacon beacon) {
+    BeaconListElement(Beacon beacon) {
         this.beacon = beacon;
     }
 
-    public boolean isSaved() {
+    boolean isSaved() {
         return saved;
     }
 
-    public void setSaved(boolean saved) {
+    void setSaved(boolean saved) {
         this.saved = saved;
     }
 
-    public String getUuid() {
+    String getUuid() {
         return beacon.getId1().toString();
     }
 
-    public String getMajor() {
+    String getMajor() {
         return beacon.getId2().toString();
     }
 
-    public String getMinor() {
+    String getMinor() {
         return beacon.getId3().toString();
     }
 

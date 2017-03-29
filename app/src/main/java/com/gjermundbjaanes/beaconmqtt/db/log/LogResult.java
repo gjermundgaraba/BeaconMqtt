@@ -1,7 +1,5 @@
 package com.gjermundbjaanes.beaconmqtt.db.log;
 
-import java.util.Date;
-
 public class LogResult {
 
     private String time;
