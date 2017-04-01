@@ -61,5 +61,12 @@
     <string name="not_able_to_start_ranging_beacons">Not able to start ranging beacons</string>
     <string name="saved_beacons_header">Saved Beacons</string>
     <string name="saved_beacons_in_range_header">Saved Beacons in Range</string>
+    <string name="beacon_delete_title">Delete Confirmation</string>
+    <string name="beacon_delete_message">Are you sure you want to delete this beacon?</string>
+    <string name="beacon_delete_not_able_to_delete">Not able to delete beacon</string>
+    <string name="location_access_title">This app needs location access</string>
+    <string name="location_access_message">Please grant location access so this app can detect beacons.</string>
+    <string name="location_permission_limited_func_title">Functionality limited</string>
+    <string name="location_permission_limited_func_message">Since location access has not been granted, this app will not be able to discover beacons when in the background.</string>
 
 </resources>

@@ -28,6 +28,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getName();
+
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private BeaconOverviewAdapter beaconOverviewAdapter;
 
@@ -38,59 +40,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent newBeaconIntent = new Intent(getApplicationContext(), NewBeaconActivity.class);
-                startActivity(newBeaconIntent);
-            }
-        });
+        setUpFab();
+        checkPermissions();
+        setUpBeaconOverviewList();
+    }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android M Permission check
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("This app needs location access");
-                builder.setMessage("Please grant location access so this app can detect beacons.");
-                builder.setPositiveButton(android.R.string.ok, null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+    private void setUpBeaconOverviewList() {
 
-                    @RequiresApi(api = Build.VERSION_CODES.M)
-                    public void onDismiss(DialogInterface dialog) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-                    }
-                });
-                builder.show();
-            }
-        }
+        ExpandableListView beaconOverviewListView = (ExpandableListView) findViewById(R.id.beacon_overview_list);
 
         List<BeaconResult> beacons = new BeaconPersistence(this).getBeacons();
-        ExpandableListView beaconOverviewListView = (ExpandableListView) findViewById(R.id.beacon_overview_list);
         beaconOverviewAdapter = new BeaconOverviewAdapter(this, beacons);
-        beaconOverviewAdapter.setOnDeleteClickListener(new BeaconOverviewAdapter.OnDeleteClickListener() {
-            @Override
-            public void onBeaconDeleteClick(final BeaconResult beaconResult) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Delete Confirmation")
-                        .setMessage("Are you sure you want to delete this beacon?")
-                        .setNegativeButton(R.string.dialog_cancel_beacon, null)
-                        .setPositiveButton(R.string.dialog_delete_beacon, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                BeaconPersistence beaconPersistence = new BeaconPersistence(MainActivity.this);
-                                boolean beaconDeleted = beaconPersistence.deleteBeacon(beaconResult);
-                                if (beaconDeleted) {
-                                    beaconOverviewAdapter.updateSavedBeacons(beaconPersistence.getBeacons());
-                                    ((BeaconApplication) getApplication()).restartBeaconSearch();
-
-                                } else {
-                                    Toast.makeText(MainActivity.this, "Not able to delete beacon", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }).show();
-            }
-        });
+        beaconOverviewAdapter.setOnDeleteClickListener(new DeleteBeaconClickListener());
         beaconOverviewListView.setAdapter(beaconOverviewAdapter);
 
         beaconOverviewListView.expandGroup(0);
@@ -110,32 +71,60 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android M Permission check
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.location_access_title);
+                builder.setMessage(R.string.location_access_message);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    public void onDismiss(DialogInterface dialog) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                    }
+                });
+                builder.show();
+            }
+        }
+    }
+
+    private void setUpFab() {
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent newBeaconIntent = new Intent(getApplicationContext(), NewBeaconActivity.class);
+                startActivity(newBeaconIntent);
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_COARSE_LOCATION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("DERP", "coarse location permission granted");
-                } else {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
-                    builder.setPositiveButton(android.R.string.ok, null);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                            }
-                        });
-                    }
-                    builder.show();
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "coarse location permission granted");
+            } else {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.location_permission_limited_func_title);
+                builder.setMessage(R.string.location_permission_limited_func_message);
+                builder.setPositiveButton(android.R.string.ok, null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+                    });
                 }
+                builder.show();
             }
         }
     }
@@ -168,4 +157,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private class DeleteBeaconClickListener implements BeaconOverviewAdapter.OnDeleteClickListener {
+        @Override
+        public void onBeaconDeleteClick(final BeaconResult beaconResult) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.beacon_delete_title)
+                    .setMessage(R.string.beacon_delete_message)
+                    .setNegativeButton(R.string.dialog_cancel_beacon, null)
+                    .setPositiveButton(R.string.dialog_delete_beacon, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            BeaconPersistence beaconPersistence = new BeaconPersistence(MainActivity.this);
+                            boolean beaconDeleted = beaconPersistence.deleteBeacon(beaconResult);
+                            if (beaconDeleted) {
+                                beaconOverviewAdapter.updateSavedBeacons(beaconPersistence.getBeacons());
+                                ((BeaconApplication) getApplication()).restartBeaconSearch();
+
+                            } else {
+                                Toast.makeText(MainActivity.this, R.string.beacon_delete_not_able_to_delete, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }).show();
+        }
+    }
 }
