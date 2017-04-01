@@ -57,7 +57,9 @@
     <string name="no">No</string>
     <string name="logging_turned_off_message">Logging is turned off, go to settings to turn it on.</string>
     <string name="new_beacon_details_already_saved">Already saved…</string>
-    <string name="new_beacon_details">Major: %1$s Minor: %2$s</string>
+    <string name="beacon_details">Major: %1$s Minor: %2$s</string>
     <string name="not_able_to_start_ranging_beacons">Not able to start ranging beacons</string>
+    <string name="saved_beacons_header">Saved Beacons</string>
+    <string name="saved_beacons_in_range_header">Saved Beacons in Range</string>
 
 </resources>

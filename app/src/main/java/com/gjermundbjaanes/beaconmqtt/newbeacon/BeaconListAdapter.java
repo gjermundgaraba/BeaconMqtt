@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import com.gjermundbjaanes.beaconmqtt.R;
 
-import org.altbeacon.beacon.Beacon;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public class BeaconListAdapter extends BaseAdapter {
         uuidView.setText(beacon.getUuid());
 
         TextView detailsView = (TextView) rowView.findViewById(R.id.beacon_details);
-        String details = context.getString(R.string.new_beacon_details, beacon.getMajor(), beacon.getMinor());
+        String details = context.getString(R.string.beacon_details, beacon.getMajor(), beacon.getMinor());
         if (beacon.isSaved()) {
             details = context.getString(R.string.new_beacon_details_already_saved) + details;
         }
