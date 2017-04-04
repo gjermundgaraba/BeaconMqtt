@@ -29,6 +29,8 @@
     <string name="published_mqtt_message_to_topic">Published MQTT message: %1$s to topic: %2$s</string>
     <string name="error_publishing_on_topic">Error Publishing on topic: %1$s</string>
     <string name="publish_failed_not_set_up">Publish not done because mqttAndroidClient is not set up</string>
+    <string name="connecting_to_mqtt_server">Connecting to MQTT server...</string>
+    <string name="connection_successful">Connection successful!</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>

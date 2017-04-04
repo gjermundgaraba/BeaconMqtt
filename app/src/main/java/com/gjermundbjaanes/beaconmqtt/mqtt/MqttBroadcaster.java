@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gjermundbjaanes.beaconmqtt.R;
 import com.gjermundbjaanes.beaconmqtt.db.log.LogPersistence;
@@ -34,6 +35,7 @@ public class MqttBroadcaster {
     private final Context context;
 
     private MqttAndroidClient mqttAndroidClient = null;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
     private final SharedPreferences defaultSharedPreferences;
     private final LogPersistence logPersistence;
 
@@ -60,7 +62,7 @@ public class MqttBroadcaster {
     }
 
     private void registerSettingsChangeListener() {
-        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (MQTT_SERVER_KEY.equals(key) || MQTT_PORT_KEY.equals(key)) {
@@ -70,7 +72,8 @@ public class MqttBroadcaster {
                     connectToMqttServer(mqttServer, mqttPort);
                 }
             }
-        });
+        };
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
     private void connectToMqttServer(String mqttServer, String mqttPort) {
@@ -83,10 +86,12 @@ public class MqttBroadcaster {
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(false);
 
+            Toast.makeText(context, R.string.connecting_to_mqtt_server, Toast.LENGTH_SHORT).show();
             mqttAndroidClient.connect(mqttConnectOptions, context, new IMqttActionListener() {
 
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+                    Toast.makeText(context, R.string.connection_successful, Toast.LENGTH_SHORT).show();
                     DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
                     disconnectedBufferOptions.setBufferEnabled(true);
                     disconnectedBufferOptions.setBufferSize(100);
@@ -97,11 +102,17 @@ public class MqttBroadcaster {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    mqttAndroidClient = null;
+                    logPersistence.saveNewLog(context.getString(R.string.failed_to_connect_mqtt_server, serverUri), "");
+                    Toast.makeText(context, context.getString(R.string.failed_to_connect_mqtt_server, serverUri), Toast.LENGTH_LONG).show();
                     Log.e(TAG, context.getString(R.string.failed_to_connect_mqtt_server, serverUri), exception);
                 }
             });
 
         } else {
+            mqttAndroidClient = null;
+            logPersistence.saveNewLog(context.getString(R.string.mqtt_missing_server_or_port), "");
+            Toast.makeText(context, R.string.mqtt_missing_server_or_port, Toast.LENGTH_LONG).show();
             Log.i(TAG, context.getString(R.string.mqtt_missing_server_or_port));
         }
 
@@ -124,6 +135,7 @@ public class MqttBroadcaster {
                     logPersistence.saveNewLog(logMessage, "");
                 }
             } catch (JSONException e) {
+                logPersistence.saveNewLog(context.getString(R.string.error_publishing_on_topic, topic), "");
                 Log.e(TAG, context.getString(R.string.error_publishing_on_topic, topic), e);
             }
         } else {
