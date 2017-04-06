@@ -43,7 +43,7 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     private SharedPreferences.OnSharedPreferenceChangeListener listener; // Needs to be here even if not used (altbeacon requirement)
     private BeaconPersistence beaconPersistence = new BeaconPersistence(this);
     private LogPersistence logPersistence = new LogPersistence(this);
-    private MqttBroadcaster mqttBroadcaster;
+    private MqttBroadcaster mqttBroadcaster = null;
     private List<BeaconResult> beaconsInRange = new ArrayList<>();
     private BeaconInRangeListener beaconInRangeListener = null;
 
@@ -51,7 +51,9 @@ public class BeaconApplication extends Application implements BootstrapNotifier 
     public void onCreate() {
         super.onCreate();
 
-        mqttBroadcaster = new MqttBroadcaster(this);
+        if (mqttBroadcaster == null) {
+            mqttBroadcaster = new MqttBroadcaster(this);
+        } // TODO: Should I set the context again?
 
         final BeaconManager beaconManager = setUpBeaconManager();
 

@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpBeaconOverviewList() {
-
         ExpandableListView beaconOverviewListView = (ExpandableListView) findViewById(R.id.beacon_overview_list);
 
         List<BeaconResult> beacons = new BeaconPersistence(this).getBeacons();

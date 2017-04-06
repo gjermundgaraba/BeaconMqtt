@@ -48,7 +48,7 @@
 
     <!-- String related to new beacon -->
     <string name="new_beacon_add_manually_menu">Add Beacon Manually</string>
-    <string name="title_activity_new_beacon">NewBeaconActivity</string>
+    <string name="title_activity_new_beacon">Add Beacon</string>
     <string name="dialog_new_beacon_name">Beacon Name (Informal)</string>
     <string name="dialog_save_beacon">Save Beacon</string>
     <string name="dialog_cancel_beacon">Cancel</string>
@@ -60,7 +60,7 @@
     <string name="not_able_to_start_ranging_beacons">Not able to start ranging beacons</string>
 
     <!-- String related to log viewing -->
-    <string name="title_activity_log">LogActivity</string>
+    <string name="title_activity_log">Log</string>
     <string name="delete_all_logs_menu">Delete All Logs</string>
     <string name="delete_logs_title">Confirm deletion of all log entries</string>
     <string name="delete_logs_message">Are you sure you want to delete all log entries?</string>
