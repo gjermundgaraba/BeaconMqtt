@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Beacon Mqtt</string>
+    <string name="app_name">Beacon MQTT</string>
     <string name="main_menu_action_settings">Settings</string>
     <string name="main_menu_action_log">Log</string>
     <string name="title_activity_settings">Settings</string>
@@ -25,7 +25,7 @@
 
     <!-- String related to MqttBroadcaster -->
     <string name="failed_to_connect_mqtt_server">Failed to connect to: %1$s</string>
-    <string name="mqtt_missing_server_or_port">Mqtt Server or Port not set, not connected to any mqtt server</string>
+    <string name="mqtt_missing_server_or_port">MQTT Server or Port not set, not connected to any MQTT server</string>
     <string name="published_mqtt_message_to_topic">Published MQTT message: %1$s to topic: %2$s</string>
     <string name="error_publishing_on_topic">Error Publishing on topic: %1$s</string>
     <string name="publish_failed_not_set_up">Publish not done because mqttAndroidClient is not set up</string>
