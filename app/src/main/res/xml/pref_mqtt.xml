@@ -17,7 +17,20 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_server_port" />
-
+    <EditTextPreference
+        android:inputType="text"
+        android:key="mqtt_user"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_user" />
+    <EditTextPreference
+        android:inputType="text"
+        android:key="mqtt_pass"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_server_pass" />
     <EditTextPreference
         android:inputType="text"
         android:key="mqtt_enter_topic"

@@ -39,6 +39,8 @@
     <string name="pref_title_general_create_log">Create Log</string>
     <string name="pref_title_server_url">Server</string>
     <string name="pref_title_server_port">Port</string>
+    <string name="pref_title_server_user">Username</string>
+    <string name="pref_title_server_pass">Password</string>
     <string name="pref_title_mqtt_enter_topic">Beacon Enter Topic</string>
     <string name="pref_title_mqtt_exit_topic">Beacon Exit Topic</string>
     <string name="pref_title_beacon_notifications_enter">Show Notifications on Beacon Enter</string>

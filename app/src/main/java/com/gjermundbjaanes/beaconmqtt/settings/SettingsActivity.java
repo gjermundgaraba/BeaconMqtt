@@ -38,6 +38,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     public static final String MQTT_SERVER_KEY = "mqtt_server";
     public static final String MQTT_PORT_KEY = "mqtt_port";
+    public static final String MQTT_USER_KEY = "mqtt_user";
+    public static final String MQTT_PASS_KEY = "mqtt_pass";
+
     public static final String MQTT_ENTER_TOPIC_KEY = "mqtt_enter_topic";
     public static final String MQTT_EXIT_TOPIC_KEY = "mqtt_exit_topic";
 
@@ -180,6 +183,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(MQTT_SERVER_KEY));
             bindPreferenceSummaryToValue(findPreference(MQTT_PORT_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_USER_KEY));
+            bindPreferenceSummaryToValue(findPreference(MQTT_PASS_KEY));
             bindPreferenceSummaryToValue(findPreference(MQTT_ENTER_TOPIC_KEY));
             bindPreferenceSummaryToValue(findPreference(MQTT_EXIT_TOPIC_KEY));
         }
