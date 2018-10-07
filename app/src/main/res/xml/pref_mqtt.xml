@@ -25,7 +25,7 @@
         android:singleLine="true"
         android:title="@string/pref_title_server_user" />
     <EditTextPreference
-        android:inputType="text"
+        android:inputType="textPassword"
         android:key="mqtt_pass"
         android:maxLines="1"
         android:selectAllOnFocus="true"
