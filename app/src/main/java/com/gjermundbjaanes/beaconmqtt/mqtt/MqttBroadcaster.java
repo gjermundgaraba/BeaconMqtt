@@ -4,6 +4,7 @@ package com.gjermundbjaanes.beaconmqtt.mqtt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -77,7 +78,6 @@ public class MqttBroadcaster {
                     String mqttPort = defaultSharedPreferences.getString(MQTT_PORT_KEY, null);
                     String mqttUser = defaultSharedPreferences.getString(MQTT_USER_KEY, null);
                     String mqttPassword = defaultSharedPreferences.getString(MQTT_PASS_KEY, null);
-
                     connectToMqttServer(mqttServer, mqttPort, mqttUser, mqttPassword);
                 }
             }
@@ -89,15 +89,22 @@ public class MqttBroadcaster {
         if (mqttServer != null && mqttPort != null) {
             final String serverUri = "tcp://" + mqttServer + ":" + mqttPort;
 
+            Log.d("Mqtt connect", "Connecting...");
+
+
             mqttAndroidClient = new MqttAndroidClient(context, serverUri, CLIENT_ID);
 
             MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(false);
-            mqttConnectOptions.setUserName(mqttUser);
-            mqttConnectOptions.setPassword(mqttPassword.toCharArray());
 
-
+            if (TextUtils.isEmpty(mqttUser)||TextUtils.isEmpty(mqttPassword)) {
+                Log.d("Mqtt connect", "Login without user/pass");
+            } else {
+                Log.d("Mqtt connect", "Login with user/pass");
+                mqttConnectOptions.setUserName(mqttUser);
+                mqttConnectOptions.setPassword(mqttPassword.toCharArray());
+            }
             Toast.makeText(context, R.string.connecting_to_mqtt_server, Toast.LENGTH_SHORT).show();
             try {
                 mqttAndroidClient.connect(mqttConnectOptions, context, new IMqttActionListener() {
@@ -112,8 +119,6 @@ public class MqttBroadcaster {
                         disconnectedBufferOptions.setPersistBuffer(false);
                         disconnectedBufferOptions.setDeleteOldestMessages(false);
                         mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
-
-
                     }
 
                     @Override
